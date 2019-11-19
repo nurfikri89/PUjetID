@@ -1,70 +1,17 @@
-# Code for performing PUjetID trainings
-is documented in pileupJetId/README_Scarlet
+# Pileup JetID
 
-# Code to synchronize variables on single events in AOD, MiniAOD and JMEValidator
+Repository for training, validation and store the weights for pileup jet ID.
+For more information please visit the twiki [PileupJetID](https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID).
 
-1. Run PU jet ID on the very same RelVal event in AOD, MiniAOD and with JMEValidator. Edit the location of the output root files according to your directories. Make sure all scripts use the same global tag for JEC. Switch to more recent RelVal samples once outdated:
+## For users
 
-cmsRun releaseValidation/fromAOD.py
+The latest version of the weights is [94X_weights_DYJets_inc_v2](https://github.com/cms-jet/PUjetID/tree/94X_weights_DYJets_inc_v2). More instructions in the README.md file of the branch.
 
-cmsRun releaseValidation/fromMiniAOD.py
 
-cmsRun runFrameworkMC.py (after editing the input file to the same as in fromMiniAOD.py)
+## For developers
 
-2. Print the variables on the first couple of events
+This is the _master_ branch, which only contains information about the package. 
+ * [94X_weights_DYJets_inc_v2](https://github.com/cms-jet/PUjetID/tree/94X_weights_DYJets_inc_v2) is the latest version for 2018 data.
+ * [fromJMEValidator](https://github.com/cms-jet/PUjetID/tree/fromJMEValidator) is the latest version for 2016 data.
 
-python printAOD.py
 
-python print_MiniAOD.py
-
-python check_JMEValidator_vars.py
-
-Below is how the names correspond to eachother in CMSSW and JME Validator
-
-CMSSW=JMEValidator
-
-pt=pt
-
-eta=pt
-
-fullDiscriminant=PUJetId_fullDiscriminant
-
-beta=beta
-
-betaClassic=betaClassic
-
-betaStar=betaStar
-
-betaStarClassic=betaStarClassic
-
-dR2Mean=DRweighted
-
-dRMatch=dRMatch
-
-dZ=dZ
-
-frac01=fRing0
-
-frac02=fRing1
-
-frac03=fRing2
-
-frac04=fRing3
-
-jetR=jetR
-
-jetRchg=jetRchg
-
-majW=axisMajor
-
-minW=axisMinor
-
-nCharged=nCh
-
-nNeutrals=nNeutrals
-
-nParticles=nTot
-
-ptD=ptD
-
-pull=pull
