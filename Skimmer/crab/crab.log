@@ -1,0 +1,22 @@
+DEBUG 2019-11-23 03:38:50.949 UTC: 	 Running on: Linux lxplus779.cern.ch 3.10.0-1062.4.1.el7.x86_64 #1 SMP Fri Oct 18 17:15:30 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2019-11-23 03:38:50.972 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2019-11-23 03:38:50.972 UTC: 	 Executing command: 'submit'
+DEBUG 2019-11-23 03:38:50.972 UTC: 	 Found CRAB cache file /afs/cern.ch/user/n/nbinnorj/.crab3
+DEBUG 2019-11-23 03:38:50.983 UTC: 	 Checking credentials
+DEBUG 2019-11-23 03:38:50.983 UTC: 	 Found proxy file /afs/cern.ch/user/n/nbinnorj/myProxy
+DEBUG 2019-11-23 03:38:50.984 UTC: 	 Getting proxy life time left
+DEBUG 2019-11-23 03:38:51.690 UTC: 	 Executing : 
+ command : voms-proxy-info -file /afs/cern.ch/user/n/nbinnorj/myProxy -timeleft
+ output : 601980
+
+ error: 
+ retcode : 0
+DEBUG 2019-11-23 03:38:52.301 UTC: 	 Executing : 
+ command : voms-proxy-info -file /afs/cern.ch/user/n/nbinnorj/myProxy -actimeleft
+ output : 601979
+
+ error: 
+ retcode : 0
+DEBUG 2019-11-23 03:38:52.301 UTC: 	 Proxy lifetime 601980 secs is different from voms extension lifetime 601979 secs for proxy: /afs/cern.ch/user/n/nbinnorj/myProxy
+DEBUG 2019-11-23 03:38:52.301 UTC: 	 Proxy valid for 167:12:59 hours
+DEBUG 2019-11-23 03:38:52.302 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
