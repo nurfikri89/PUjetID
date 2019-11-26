@@ -6,11 +6,8 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import *
 
 import math
-import random
 import array
-#
-#
-#
+
 class SkimmerDiMuon(Module):
   def __init__(self, isMC, era):
     self.era = era
@@ -106,6 +103,7 @@ class SkimmerDiMuon(Module):
       evtWeight = event.genWeight
 
     self.RegisterCut("NoSelection", evtWeight)
+
     #######################
     #
     # Pre-selection

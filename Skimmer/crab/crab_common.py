@@ -1,7 +1,7 @@
 from CRABClient.UserUtilities import config
 config = config()
 #
-# Set version number
+# Set version number (CHECK)
 #
 version="DiMuonSkim_v0"
 #
@@ -36,8 +36,13 @@ config.Data.publication  = False
 config.Data.allowNonValidInputDataset = True
 config.JobType.allowUndistributedCMSSW = True
 #
-config.Data.outLFNDirBase  = '/store/user/nbinnorj/CRABOUTPUT_JetPUId_'+version+'/'
-config.Site.storageSite    = 'T2_CH_CERNBOX'
+# Specify the outLFNDirBase and your storage site
+#
+config.Data.outLFNDirBase  = '/store/group/phys_jetmet/CRABOUTPUT_JetPUId_'+version+'/'
+config.Site.storageSite    = 'T2_CH_CERN'
+# config.Data.outLFNDirBase  = '/store/user/nbinnorj/CRABOUTPUT_JetPUId_'+version+'/'
+# config.Site.storageSite    = 'T2_CH_CERNBOX'
+#
 config.Data.ignoreLocality = True
 whitelist_sites=[
 'T2_CH_CERN',

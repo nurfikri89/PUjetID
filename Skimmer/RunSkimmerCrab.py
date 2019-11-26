@@ -46,21 +46,18 @@ CMSSW_BASE = os.getenv('CMSSW_BASE')
 
 if era == "2016":
   if isMC: 
-      # modules=[SkimmerDiMuon_2016_mc()]
       modules=[puWeight_2016(), SkimmerDiMuon_2016_mc()]
   else:              
     modules=[SkimmerDiMuon_2016_data()]
     jsonInput=CMSSW_BASE+"/src/PUjetID/Skimmer/data/lumi/Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt"
 elif era == "2017":
   if isMC: 
-      # modules=[SkimmerDiMuon_2017_mc()]
       modules=[puWeight_2017(), SkimmerDiMuon_2017_mc()]
   else:              
     modules=[SkimmerDiMuon_2017_data()]
     jsonInput=CMSSW_BASE+"/src/PUjetID/Skimmer/data/lumi/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
 elif era == "2018":
   if isMC: 
-      # modules=[SkimmerDiMuon_2018_mc()]
       modules=[puWeight_2018(), SkimmerDiMuon_2018_mc()]
   else:              
     modules=[SkimmerDiMuon_2018_data()]

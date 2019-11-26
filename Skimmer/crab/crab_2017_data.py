@@ -4,15 +4,15 @@ import helpers
 
 crab_common.config.General.requestName = crab_common.reqNamePrefix+'Data17_'+crab_common.version
 
-crab_common.config.JobType.maxJobRuntimeMin = 300
+crab_common.config.JobType.maxJobRuntimeMin = 480
 
 crab_common.config.JobType.scriptArgs = [
 'isMC=0',
 'era=2017',
 ]
 
-crab_common.config.Data.inputDataset     = '/SingleMuon/Run2017B_ver1-Nano1June2019_ver1-v1/NANOAOD' #Dummy
-crab_common.config.Data.outputDatasetTag = crab_common.reqNamePrefix+'Data17_'+crab_common.version #Dummy
+crab_common.config.Data.inputDataset     = '/DoubleMuon/Run2017B_ver1-Nano1June2019_ver1-v1/NANOAOD' #Dummy. Doesnt matter
+crab_common.config.Data.outputDatasetTag = crab_common.reqNamePrefix+'Data17_'+crab_common.version #Dummy. Doesnt matter
 
 if __name__ == '__main__':
   #
@@ -39,10 +39,10 @@ if __name__ == '__main__':
     secondaryName = secondaryName.replace("Nano1June2019","Data17NanoAODv5") #CHECK
     #
     requestName = primaryName + "_" + secondaryName
-    requestName = "XZV_" + requestName + "_" + crab_common.version
+    requestName = crab_common.reqNamePrefix + "_" + requestName + "_" + crab_common.version
     crab_common.config.General.requestName   = requestName
     #  
-    outputDatasetTag = "XZV_" + secondaryName + "_" + crab_common.version 
+    outputDatasetTag = crab_common.reqNamePrefix + "_" + secondaryName + "_" + crab_common.version 
     crab_common.config.Data.outputDatasetTag = outputDatasetTag 
     #
     print requestName , " | ", outputDatasetTag, "\n"

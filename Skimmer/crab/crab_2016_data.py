@@ -4,15 +4,15 @@ import helpers
 
 crab_common.config.General.requestName = crab_common.reqNamePrefix+'Data16_'+crab_common.version
 
-crab_common.config.JobType.maxJobRuntimeMin = 300
+crab_common.config.JobType.maxJobRuntimeMin = 480
 
 crab_common.config.JobType.scriptArgs = [
 'isMC=0',
 'era=2016',
 ]
 
-crab_common.config.Data.inputDataset     = '/DoubleMuon/Run2016H-Nano1June2019-v1/NANOAOD' #Dummy
-crab_common.config.Data.outputDatasetTag = crab_common.reqNamePrefix+'Data16_'+crab_common.version #Dummy
+crab_common.config.Data.inputDataset     = '/DoubleMuon/Run2016H-Nano1June2019-v1/NANOAOD' #Dummy. Doesnt matter
+crab_common.config.Data.outputDatasetTag = crab_common.reqNamePrefix+'Data16_'+crab_common.version #Dummy. Doesnt matter
 
 if __name__ == '__main__':
   #
