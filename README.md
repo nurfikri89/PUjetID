@@ -29,7 +29,7 @@ cmsenv
 
 ### 1. Checkout packages and compile
 
-Checkout this framework and [nanoAOD-tools]{https://github.com/cms-nanoAOD/nanoAOD-tools}:
+Checkout this framework and [nanoAOD-tools](https://github.com/cms-nanoAOD/nanoAOD-tools):
 ```
 git clone git@github.com:nurfikri89/PUjetID.git PUjetID
 git clone git@github.com:cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
