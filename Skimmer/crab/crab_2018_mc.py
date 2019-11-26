@@ -4,14 +4,14 @@ import helpers
 
 crab_common.config.General.requestName = crab_common.reqNamePrefix+'MC18_'+crab_common.version
 
-crab_common.config.JobType.maxJobRuntimeMin = 360
+crab_common.config.JobType.maxJobRuntimeMin = 600
 
 crab_common.config.JobType.scriptArgs = [
 'isMC=1',
 'era=2018',
 ]
 
-crab_common.config.Data.inputDataset     = '/WprimeToWZToWhadZlep_width0p1_M-800_TuneCUETP8M1_13TeV-madgraph-pythia8/RunIISummer16NanoAODv5-PUMoriond17_Nano1June2019_102X_mcRun2_asymptotic_v7-v1/NANOAODSIM' #Dummy
+crab_common.config.Data.inputDataset     = '/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIAutumn18NanoAODv5-Nano1June2019_102X_upgrade2018_realistic_v19-v1/NANOAODSIM' #Dummy
 crab_common.config.Data.outputDatasetTag = crab_common.reqNamePrefix+'MC18_'+crab_common.version  # Dummy
 
 if __name__ == '__main__':
