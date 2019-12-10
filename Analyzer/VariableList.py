@@ -137,7 +137,7 @@ Variables["dimuon_pt"].xmax = 500
 Variables["dimuon_pt"].rebins = []
 
 Variables["dimuon_eta"] = Variable()
-Variables["dimuon_eta"].varNameInTree = "dimuon_pt"
+Variables["dimuon_eta"].varNameInTree = "dimuon_eta"
 Variables["dimuon_eta"].xAxisName = "dimuon #eta [GeV]"
 Variables["dimuon_eta"].yAxisName = "Events"
 Variables["dimuon_eta"].doLogY = False
@@ -147,7 +147,7 @@ Variables["dimuon_eta"].xmax = etamax
 Variables["dimuon_eta"].rebins = []
 
 Variables["dimuon_phi"] = Variable()
-Variables["dimuon_phi"].varNameInTree = "dimuon_pt"
+Variables["dimuon_phi"].varNameInTree = "dimuon_phi"
 Variables["dimuon_phi"].xAxisName = "dimuon #phi"
 Variables["dimuon_phi"].yAxisName = "Events"
 Variables["dimuon_phi"].doLogY = False
