@@ -36,17 +36,76 @@ def main(sample_name):
   df = ROOT.ROOT.RDataFrame(treeName, vec)
   numOfEvents = df.Count()
   print("Number of events in sample: %s " %numOfEvents.GetValue())
-  
+
+  #############################################
+  #
+  # Define variables
+  #
+  #############################################
+  # Define evtWeight variable
+  if "Data" in sample_name:
+    df = df.Define("evtWeight","1.0")
+  else: #For MC
+    df = df.Define("evtWeight","genWeight")
+  # Define name for event weight
+  weightName = "evtWeight"
+
+  #############################################
+  #
+  # Define Filters
+  #
+  #############################################
+  df_filters  = OrderedDict()
+  df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
+  df_filters["passOS_passNJets1"] = df_filters["passOS"].Filter("nJetSel>=1")
+
+  ##############################################
+  #
+  # Define the cut levels that we want to make 
+  # histograms
+  #
+  #############################################
+  cutLevels = []
+  cutLevels += [
+    "passOS",
+    "passOS_passNJets1",
+  ]
+
+  ##############################################
+  #
+  # Make the histograms
+  #
+  #############################################
   # Create histogram dictionary
   Histograms = {}
-
-  #making histogram
-  for varName in VariableList.Variables:
-    var = VariableList.Variables[varName]
-    print ("Creating %s histogram." %var.varNameInTree)
-    Histograms[var.varNameInTree] = df.Histo1D((var.varNameInTree, var.varNameInTree, var.nbins, var.xmin, var.xmax), var.varNameInTree)
-    # h_filtered = df_filtered.Histo1D((var.varNameInTree, var.varNameInTree, var.nbins, var.xmin, var.xmax), var.varNameInTree)
   
+  #
+  # Loop over cutLevels
+  #
+  for cutLevel in cutLevels:
+    #
+    # Loop over histograms
+    #
+    for varName in VariableList.Variables:
+      var = VariableList.Variables[varName]
+      #
+      # Some exceptions
+      #
+      if "jet0" in varName:
+        if "passNJets1" not in cutLevel:
+          continue
+      #
+      # Define full name for histogram
+      #
+      histoNameFinal  = "h_%s_%s" %(cutLevel,varName)
+      Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D((histoNameFinal, histoNameFinal+";"+var.xAxisName, var.nbins, var.xmin, var.xmax), var.varNameInTree,weightName)
+      print ("Creating histo: %s" %histoNameFinal)
+
+  ##############################################
+  #
+  # Save histograms in output rootfile
+  #
+  #############################################
   #
   # Create histos directory
   #
