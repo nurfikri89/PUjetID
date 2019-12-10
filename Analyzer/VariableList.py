@@ -1,3 +1,5 @@
+import collections
+
 from numpy import array
 
 etabins = 120;
@@ -22,7 +24,7 @@ class Variable:
 	doLogY = False
 	rebins = []
 
-Variables = {}
+Variables = collections.OrderedDict()
 
 Variables["mu0_pt"] = Variable()
 Variables["mu0_pt"].varNameInTree = "mu0_pt"

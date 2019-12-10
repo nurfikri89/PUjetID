@@ -1,3 +1,5 @@
+import collections
+
 class Sample:
   def __init__(self, name="", files=[]):
     self.name  = name
@@ -7,7 +9,7 @@ version="DiMuonSkim_v0"
 EOSUSER="root://eosuser.cern.ch/"
 EOSDIR="/eos/user/n/nbinnorj/CRABOUTPUT_JetPUId_"+version+"/"
 
-Samples = {}
+Samples = collections.OrderedDict()
 
 Samples["MC16_DY_MG"] = Sample(
   name="MC16_DY_MG",
@@ -28,7 +30,7 @@ Samples["Data16B_DoubleMuon"] = Sample(
   name="Data16B_DoubleMuon",
   files=[
     EOSDIR+"DoubleMuon/JetPUId_Run2016B_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root",
-    EOSDIR+"DoubleMuon/JetPUId_Run2016B_ver1-Data16NanoAODv5_ver2-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016B_ver2-Data16NanoAODv5_ver2-v1_"+version+"/*/*/tree_*.root"
   ]
 )
 
