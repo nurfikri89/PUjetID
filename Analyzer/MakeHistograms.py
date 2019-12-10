@@ -24,7 +24,7 @@ def main(sample_name):
   FileList = []
   for files in SampleList.Samples[sample_name].files:
     # print("Processing %s" %files)
-    FileList += glob.glob(files)
+    FileList += [EOSUSER+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
