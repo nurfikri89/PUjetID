@@ -1,7 +1,7 @@
 class Sample:
   def __init__(self, name="", files=[]):
-      self.name  = name
-      self.files = files 
+    self.name  = name
+    self.files = files 
 
 version="DiMuonSkim_v0"
 EOSUSER="root://eosuser.cern.ch/"
@@ -35,41 +35,41 @@ Samples["Data16B_DoubleMuon"] = Sample(
 Samples["Data16C_DoubleMuon"] = Sample(
   name="Data16C_DoubleMuon",
   files=[
-    EOSDIR+"DoubleMuon/JetPUId_Run2016C_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016C-Data16NanoAODv5-v1_"+version+"/*/*/tree_*.root"
   ]
 )
 
 Samples["Data16D_DoubleMuon"] = Sample(
   name="Data16D_DoubleMuon",
   files=[
-    EOSDIR+"DoubleMuon/JetPUId_Run2016D_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016D-Data16NanoAODv5-v1_"+version+"/*/*/tree_*.root"
   ]
 )
 
 Samples["Data16E_DoubleMuon"] = Sample(
   name="Data16E_DoubleMuon",
   files=[
-    EOSDIR+"DoubleMuon/JetPUId_Run2016E_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016E-Data16NanoAODv5-v1_"+version+"/*/*/tree_*.root"
   ]
 )
 
 Samples["Data16F_DoubleMuon"] = Sample(
   name="Data16F_DoubleMuon",
   files=[
-    EOSDIR+"DoubleMuon/JetPUId_Run2016F_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016F-Data16NanoAODv5-v1_"+version+"/*/*/tree_*.root"
   ]
 )
 
 Samples["Data16G_DoubleMuon"] = Sample(
   name="Data16G_DoubleMuon",
   files=[
-    EOSDIR+"DoubleMuon/JetPUId_Run2016G_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016G-Data16NanoAODv5-v1_"+version+"/*/*/tree_*.root"
   ]
 )
 
 Samples["Data16H_DoubleMuon"] = Sample(
   name="Data16H_DoubleMuon",
   files=[
-    EOSDIR+"DoubleMuon/JetPUId_Run2016H_ver1-Data16NanoAODv5_ver1-v1_"+version+"/*/*/tree_*.root"
+    EOSDIR+"DoubleMuon/JetPUId_Run2016H-Data16NanoAODv5-v1_"+version+"/*/*/tree_*.root"
   ]
 )
