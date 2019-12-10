@@ -31,7 +31,7 @@ cmsenv
 
 Checkout this framework and [nanoAOD-tools](https://github.com/cms-nanoAOD/nanoAOD-tools):
 ```
-git clone git@github.com:nurfikri89/PUjetID.git PUjetID
+git clone git@github.com:abuubaidah89/PUjetID.git PUjetID
 git clone git@github.com:cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
 ```
 and then compile:
