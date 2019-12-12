@@ -7,11 +7,13 @@ ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetTextFont(42)
 
 def main(DataFileName, MCFileName):
+	# open histogram files
 	histDataFile = ROOT.TFile.Open("./histos/"+DataFileName+".root", 'READ')
 	histMCFile = ROOT.TFile.Open("./histos/"+MCFileName+".root", 'READ')
 
+	# loop over every object inside the histogram files
 	for key in ROOT.gDirectory.GetListOfKeys():
-	  
+
 	  dataHisto = histDataFile.Get( key.GetName() )
 	  mcHisto = histMCFile.Get( key.GetName() )
 	  
@@ -21,7 +23,6 @@ def main(DataFileName, MCFileName):
 	  # normalize MC to data
 	  nEventsData = dataHisto.Integral(0, 5000)
 	  nEventsMC = mcHisto.Integral(0, 5000)
-	
 	  mcHisto.Scale(nEventsData/nEventsMC)
 	
 	  pad1 = ROOT.TPad (" pad1 "," pad1 " ,0 ,0.3 ,1 ,1)
@@ -29,12 +30,14 @@ def main(DataFileName, MCFileName):
 	  pad1.cd ()
 	  pad1.SetBottomMargin(0)
 	
-	  # dataHisto.SetLineColor(ROOT.kBlack+1)
+	  # plot MC vs data histogram
 	  mcHisto.SetTitle("")
 	  mcHisto.GetXaxis().SetLabelSize(0)
 	  mcHisto.GetXaxis().SetTitleSize(0)
 	  mcHisto.GetYaxis().SetTitleSize(0.05)
 	  mcHisto.GetYaxis().SetTitle("Number of events")
+	  mcHisto.GetYaxis().SetTitleOffset(1.0)
+	  mcHisto.SetLineWidth(2)
 	  mcHisto.SetLineColor(ROOT.kRed+1)
 	  mcHisto.Draw("hist")
 	
@@ -55,13 +58,24 @@ def main(DataFileName, MCFileName):
 	  	mcHisto.SetMaximum(mcHisto.GetMaximum()*50)
 	  	pad1.SetLogy()
 	
+	  legend = ROOT.TLegend(0.8 ,0.75 , 0.90 , 0.85)
+	  if MCFileName == "Histo_MC16_DY_AMCNLO":
+	  	legend.AddEntry( mcHisto , "AMCNLO")
+	  elif MCFileName == "Histo_MC16_DY_MG":
+	  	legend.AddEntry( mcHisto, "MG")
+	  legend.AddEntry( dataHisto , "2016 Data")
+	  legend.SetTextSize(0.02)
+	  legend.SetLineWidth(0)
+	  legend.Draw(" same ")
+
 	  canvas.cd()
 	  pad2 = ROOT.TPad(" pad2 "," pad2 " ,0 ,0.05 ,1 ,0.3)
 	  pad2.SetTopMargin(0)
 	  pad2.SetBottomMargin(0.25)
 	  pad2.Draw()
 	  pad2.cd()
-	
+		
+	  # ratio plot
 	  ratio = dataHisto.Clone()
 	  ratio.Divide(mcHisto)
 	  ratio.SetLineColor(ROOT.kBlack)
@@ -82,7 +96,7 @@ def main(DataFileName, MCFileName):
 	  line.SetLineWidth(2)
 	  line.Draw()
 	  ratio.Draw("same")
-	
+
 	  canvas.Update()
 
 	  if MCFileName == "Histo_MC16_DY_AMCNLO":
