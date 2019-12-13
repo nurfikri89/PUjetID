@@ -1,4 +1,4 @@
-
+import os
 import ROOT
 # from collections import OrderedDict 
 # import VariableList
@@ -100,12 +100,16 @@ def main(DataFileName, MCFileName):
 	  canvas.Update()
 
 	  if MCFileName == "Histo_MC16_DY_AMCNLO":
-	  	canvas.Print( "./Data16_VS_AMCNLO/png/"+key.GetName()+"plots.png")
-	  	canvas.Print( "./Data16_VS_AMCNLO/pdf/"+key.GetName()+"plots.pdf")
+	  	outDir = './Data16_VS_AMCNLO/'
+	  	if not(os.path.isdir(outDir)): os.mkdir(outDir)
+	  	canvas.Print( outDir+key.GetName()+"plots.png")
+	  	# canvas.Print( outDir+key.GetName()+"plots.pdf")
 
 	  elif MCFileName == "Histo_MC16_DY_MG":
-		canvas.Print( "./Data16_VS_MG/png/"+key.GetName()+"plots.png")
-	  	canvas.Print( "./Data16_VS_MG/pdf/"+key.GetName()+"plots.pdf")	  	
+	  	outDir = './Data16_VS_MG/'
+	  	if not(os.path.isdir(outDir)): os.mkdir(outDir)
+		canvas.Print( outDir+key.GetName()+"plots.png")
+	  	# canvas.Print( outDir+key.GetName()+"plots.pdf")	  	
 	
 	histDataFile.Close()
 	histMCFile.Close()
