@@ -57,7 +57,7 @@ def main(sample_name):
   #############################################
   df_filters  = OrderedDict()
   df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
-  df_filters["passOS_passNJets1"] = df_filters["passOS"].Filter("nJetSel>=1")
+  df_filters["passOS_passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
 
   ##############################################
   #
@@ -89,7 +89,7 @@ def main(sample_name):
     for varName in VariableList.Variables:
       var = VariableList.Variables[varName]
       #
-      # Some exceptions
+      # Some exceptions (why???)
       #
       if "jet0" in varName:
         if "passNJets1" not in cutLevel:

@@ -213,6 +213,6 @@ Variables["jet0_dimuon_dphi"].xAxisName = "Delta#phi(dimuon,jet0)"
 Variables["jet0_dimuon_dphi"].yAxisName = "Events"
 Variables["jet0_dimuon_dphi"].doLogY = False
 Variables["jet0_dimuon_dphi"].nbins = 100
-Variables["jet0_dimuon_dphi"].xmin = 0
+Variables["jet0_dimuon_dphi"].xmin = -2*pi
 Variables["jet0_dimuon_dphi"].xmax = 2*pi
 Variables["jet0_dimuon_dphi"].rebins = []
