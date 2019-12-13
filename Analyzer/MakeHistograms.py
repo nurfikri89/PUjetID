@@ -123,6 +123,10 @@ def main(sample_name):
 
   f.Close()
   print("Histos saved in %s" %outFileName)
+
+  # combine all data histos into one root file
+  os.system('hadd -f histos/Histo_Data16.root histos/Histo_Data16*_DoubleMuon.root')
+
   timer.Stop()
   timer.Print()
   print("==============================")
