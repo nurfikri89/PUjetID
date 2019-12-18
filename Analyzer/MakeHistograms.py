@@ -6,6 +6,7 @@ from collections import OrderedDict
 import VariableList
 import SampleList
 ROOT.gROOT.SetBatch()
+ROOT.gROOT.LoadMacro("./Helpers.h")
 #
 # Only on lxplus7
 # source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
@@ -34,8 +35,10 @@ def main(sample_name):
 
   # Read all files into RDataFrame
   df = ROOT.ROOT.RDataFrame(treeName, vec)
-  numOfEvents = df.Count()
-  print("Number of events in sample: %s " %numOfEvents.GetValue())
+  
+  isMC = False
+  if "MC" in sample_name:
+    isMC = True
 
   #############################################
   #
@@ -50,6 +53,9 @@ def main(sample_name):
   # Define name for event weight
   weightName = "evtWeight"
 
+  df = df.Define("jet0_dimuon_dphi_norm","DeltaPhiNorm(jet0_dimuon_dphi)")
+  if isMC:
+    df = df.Define("passGenMatch","jet0_gen_match")
   #############################################
   #
   # Define Filters
@@ -58,6 +64,51 @@ def main(sample_name):
   df_filters  = OrderedDict()
   df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
   df_filters["passOS_passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
+
+  #
+  # Define eta bins
+  #
+  etaBins = OrderedDict()
+  etaBins["eta0p0To1p479"] = "(fabs(jet0_eta) > 0.0)   && (fabs(jet0_eta) <= 1.479)"
+  etaBins["eta1p479To2p4"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
+  etaBins["eta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
+  etaBins["eta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
+  etaBins["eta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
+  etaBins["eta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
+
+  #
+  # Define jet0 pt bins
+  #
+  ptBins = OrderedDict()
+  ptBins["pt20To30"]  = "(jet0_pt > 20.) && (jet0_pt <= 30.)"
+  ptBins["pt30To40"]  = "(jet0_pt > 30.) && (jet0_pt <= 40.)"
+  ptBins["pt40To50"]  = "(jet0_pt > 40.) && (jet0_pt <= 50.)"
+  ptBins["pt50To60"]  = "(jet0_pt > 50.) && (jet0_pt <= 60.)"
+  # ptBins["pt60To80"]  = "(jet0_pt > 60.) && (jet0_pt <= 80.)"
+  # ptBins["pt80To100"] = "(jet0_pt > 80.) && (jet0_pt <= 100.)"
+
+  binNames = []
+  for eta in etaBins:
+    for pt in ptBins:
+      cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt
+      filterStr  = etaBins[eta] + " && " + ptBins[pt]
+      df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+      binNames.append(cutNameStr)
+      #
+      # Gen Matching requirement
+      #
+      if isMC:
+        #pass
+        cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
+        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
+        df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+        binNames.append(cutNameStr)
+        #fail
+        cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
+        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
+        df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+        binNames.append(cutNameStr)
+
 
   ##############################################
   #
@@ -70,6 +121,7 @@ def main(sample_name):
     "passOS",
     "passOS_passNJets1",
   ]
+  cutLevels += binNames
 
   ##############################################
   #
@@ -89,7 +141,7 @@ def main(sample_name):
     for varName in VariableList.Variables:
       var = VariableList.Variables[varName]
       #
-      # Some exceptions (why???)
+      # Some exceptions (why??? FIKRI: It only makes sense to make jet0 related histograms after requiring >=1 jets)
       #
       if "jet0" in varName:
         if "passNJets1" not in cutLevel:
@@ -101,6 +153,8 @@ def main(sample_name):
       Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D((histoNameFinal, histoNameFinal+";"+var.xAxisName, var.nbins, var.xmin, var.xmax), var.varNameInTree,weightName)
       print ("Creating histo: %s" %histoNameFinal)
 
+  numOfEvents = df.Count()
+  print("Number of events in sample: %s " %numOfEvents.GetValue())
   ##############################################
   #
   # Save histograms in output rootfile
@@ -124,9 +178,6 @@ def main(sample_name):
   f.Close()
   print("Histos saved in %s" %outFileName)
 
-  # combine all data histos into one root file
-  os.system('hadd -f histos/Histo_Data16.root histos/Histo_Data16*_DoubleMuon.root')
-
   timer.Stop()
   timer.Print()
   print("==============================")
@@ -134,4 +185,6 @@ def main(sample_name):
 if __name__== "__main__":
   for sample_name in SampleList.Samples:
     main(sample_name)
+  # combine all data histos into one root file
+  os.system('hadd -f histos/Histo_Data16.root histos/Histo_Data16*_DoubleMuon.root')
 
