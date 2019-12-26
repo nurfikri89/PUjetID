@@ -12,8 +12,8 @@ def main(DataFileName, MCFileName):
 	histMCFile = ROOT.TFile.Open("./histos/"+MCFileName+".root", 'READ')
 
 	# loop over every object inside the histogram files
-	for key in ROOT.gDirectory.GetListOfKeys():
-
+	for key in histDataFile.GetListOfKeys():
+  # for key in ROOT.gDirectory.GetListOfKeys():
 	  dataHisto = histDataFile.Get( key.GetName() )
 	  mcHisto = histMCFile.Get( key.GetName() )
 	  
