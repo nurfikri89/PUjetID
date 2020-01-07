@@ -39,4 +39,13 @@ and then compile:
 scram b -j4
 ```
 
+### 2. Producing skimmed NanoAOD
+
+### 3. Make histograms from skimmed NanoAOD
+
+Only on lxplus7, source to following root for compatibality with RDataFrame:
+```
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
+```
+
 
