@@ -39,4 +39,8 @@ and then compile:
 scram b -j4
 ```
 
+### 2. Producing skimmed NanoAOD
+
+### 3. Make histograms from skimmed NanoAOD
+
 
