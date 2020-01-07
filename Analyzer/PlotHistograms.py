@@ -103,14 +103,14 @@ def main(DataFileName, MCFileName):
     if MCFileName == "Histo_MC16_DY_AMCNLO":
       outDir = './Data16_VS_AMCNLO/'
       if not(os.path.isdir(outDir)): os.mkdir(outDir)
-      # canvas.Print( outDir+key.GetName()+"plots.png")
-      canvas.Print( outDir+key.GetName()+"plots.pdf")
+      # canvas.Print( outDir+key.GetName()+".png")
+      canvas.Print( outDir+key.GetName()+".pdf")
 
     elif MCFileName == "Histo_MC16_DY_MG":
       outDir = './Data16_VS_MG/'
       if not(os.path.isdir(outDir)): os.mkdir(outDir)
-      # canvas.Print( outDir+key.GetName()+"plots.png")
-      canvas.Print( outDir+key.GetName()+"plots.pdf")     
+      # canvas.Print( outDir+key.GetName()+".png")
+      canvas.Print( outDir+key.GetName()+".pdf")     
   
   histDataFile.Close()
   histMCFile.Close()
