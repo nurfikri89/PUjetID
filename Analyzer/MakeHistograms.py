@@ -36,7 +36,6 @@ def main(sample_name):
 
   # Read all files into RDataFrame
   df = ROOT.ROOT.RDataFrame(treeName, vec)
-
   isMC = False
   if "MC" in sample_name:
     isMC = True
@@ -57,7 +56,6 @@ def main(sample_name):
   df = df.Define("jet0_dimuon_dphi_norm","DeltaPhiNorm(jet0_dimuon_dphi)")
   if isMC:
     df = df.Define("passGenMatch","jet0_gen_match")
-
   #############################################
   #
   # Define Filters
@@ -142,7 +140,7 @@ def main(sample_name):
     for varName in VariableList.Variables:
       var = VariableList.Variables[varName]
       #
-      # Some exceptions (why???)
+      # Some exceptions (why??? FIKRI: It only makes sense to make jet0 related histograms after requiring >=1 jets)
       #
       if "jet0" in varName:
         if "passNJets1" not in cutLevel:
