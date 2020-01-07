@@ -7,6 +7,7 @@ import VariableList
 import SampleList
 ROOT.gROOT.SetBatch()
 ROOT.gROOT.LoadMacro("./Helpers.h")
+
 #
 # Only on lxplus7
 # source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
@@ -35,7 +36,6 @@ def main(sample_name):
 
   # Read all files into RDataFrame
   df = ROOT.ROOT.RDataFrame(treeName, vec)
-  
   isMC = False
   if "MC" in sample_name:
     isMC = True
@@ -108,7 +108,6 @@ def main(sample_name):
         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
         df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
         binNames.append(cutNameStr)
-
 
   ##############################################
   #
@@ -187,4 +186,3 @@ if __name__== "__main__":
     main(sample_name)
   # combine all data histos into one root file
   os.system('hadd -f histos/Histo_Data16.root histos/Histo_Data16*_DoubleMuon.root')
-

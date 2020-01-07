@@ -116,14 +116,5 @@ def main(DataFileName, MCFileName):
   histMCFile.Close()
 
 if __name__=="__main__":
-  # main("Histo_Data16","Histo_MC16_DY_AMCNLO")
   main("Histo_Data16","Histo_MC16_DY_MG")
-
-# rm -rf Data16_VS_MG  histos 
-# rm -rf ~/EOS/www/Data16_VS_MG 
-# rm -rf ~/EOS/www/histos     
-# cp -r Data16_VS_MG ~/EOS/www/
-  
-
-#
-#
+  # main("Histo_Data16","Histo_MC16_DY_AMCNLO")
