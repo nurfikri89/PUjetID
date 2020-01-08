@@ -43,7 +43,7 @@ scram b -j4
 
 ### 3. Make histograms from skimmed NanoAOD
 
-Only on lxplus7, source to following root for compatibality with RDataFrame. It is also best to do this in a new shell (without running cmsenv) to avoid any complication:
+Only on lxplus7, source to the following Root for compatibality with RDataFrame. It is also best to do this in a new shell (without running cmsenv) to avoid any complication:
 ```
 source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
 ```
@@ -51,4 +51,7 @@ Run the MakeHistograms script:
 ```
 python Analyzer/MakeHistograms.py
 ```
-
+Plot the histograms:
+```
+python Analyzer/PlotHistograms.py
+```
