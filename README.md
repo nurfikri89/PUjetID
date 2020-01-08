@@ -49,6 +49,7 @@ source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt
 ```
 Run the MakeHistograms script:
 ```
+cd PUJetID
 python Analyzer/MakeHistograms.py
 ```
 Plot the histograms:
