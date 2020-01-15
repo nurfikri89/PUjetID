@@ -12,7 +12,7 @@ ROOT.gROOT.LoadMacro("./Helpers.h")
 # Only on lxplus7
 # source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
 #
-EOSUSER="root://eosuser.cern.ch/"
+EOSURL=SampleList.EOSURL
 treeName="Events"
 
 ROOT.ROOT.EnableImplicitMT(8)
@@ -26,7 +26,7 @@ def main(sample_name):
   FileList = []
   for files in SampleList.Samples[sample_name].files:
     # print("Processing %s" %files)
-    FileList += [EOSUSER+f for f in glob.glob(files)]
+    FileList += [EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()

@@ -6,8 +6,8 @@ class Sample:
     self.files = files 
 
 version="DiMuonSkim_v0"
-EOSUSER="root://eosuser.cern.ch/"
-EOSDIR="/eos/user/n/nbinnorj/CRABOUTPUT_JetPUId_"+version+"/"
+EOSURL="root://eoscms.cern.ch/"
+EOSDIR="/eos/cms/store/group/phys_jetmet/nbinnorj/JetPUId_"+version+"/CRABOUTPUT_JetPUId_"+version+"/"
 
 Samples = collections.OrderedDict()
 
