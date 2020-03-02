@@ -98,18 +98,19 @@ def main(sample_name):
       binNames.append(cutNameStr)
       #
       # Gen Matching requirement
+      # FIKRI: We don't need these histograms for the dphi fits.
       #
-      if isMC:
-        #pass
-        cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
-        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
-        df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
-        binNames.append(cutNameStr)
-        #fail
-        cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
-        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
-        df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
-        binNames.append(cutNameStr)
+      # if isMC:
+      #   #pass
+      #   cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
+      #   filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
+      #   df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+      #   binNames.append(cutNameStr)
+      #   #fail
+      #   cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
+      #   filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
+      #   df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+      #   binNames.append(cutNameStr)
   
   #
   # Define PU Id cuts
@@ -118,35 +119,19 @@ def main(sample_name):
   puIDCuts["passPUIDLoose"]  = "(jet0_puId == 4)"
   puIDCuts["passPUIDMedium"] = "(jet0_puId == 6)"
   puIDCuts["passPUIDTight"]  = "(jet0_puId == 7)"
-  # puIDCuts["failPUIDLoose"]  = "(jet0_puId != 4)"
-  # puIDCuts["failPUIDMedium"] = "(jet0_puId != 6)"
-  # puIDCuts["failPUIDTight"]  = "(jet0_puId != 7)"
+  puIDCuts["failPUIDLoose"]  = "(jet0_puId != 4)"
+  puIDCuts["failPUIDMedium"] = "(jet0_puId != 6)"
+  puIDCuts["failPUIDTight"]  = "(jet0_puId != 7)"
 
   #
   # Define pt balance cuts
   #
   ptBalanceCuts = OrderedDict()
-  ptBalanceCuts["ptBal0p0To0p5"] = "jet0_dimuon_ptbalance<0.5"
-  ptBalanceCuts["ptBal0p5To1p5"] = "(jet0_dimuon_ptbalance>=0.5) && (jet0_dimuon_ptbalance<1.5)"
+  ptBalanceCuts["badBal"]  = "jet0_dimuon_ptbalance<0.5"
+  ptBalanceCuts["goodBal"] = "(jet0_dimuon_ptbalance>=0.5) && (jet0_dimuon_ptbalance<1.5)"
 
   cutNames=[]
   for binName in binNames:
-    #
-    # apply only ptBalance cut
-    #
-    for ptBalCut in ptBalanceCuts:
-      cutNameStr = binName + "_" + ptBalCut
-      filterStr  = ptBalanceCuts[ptBalCut]
-      df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
-      cutNames.append(cutNameStr)
-    #
-    # apply only the pu ID cut
-    #
-    for puIDCut in puIDCuts:
-      cutNameStr = binName + "_" + puIDCut
-      filterStr  = puIDCuts[puIDCut]
-      df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
-      cutNames.append(cutNameStr)
     #
     # apply ptBalance and puID at the same time
     #
@@ -165,10 +150,10 @@ def main(sample_name):
   #############################################
   cutLevels = []
   cutLevels += [
-    "passOS",
-    "passOS_passNJets1",
+    # "passOS", # FIKRI: We don't need these histograms for the dphi fits.
+    # "passOS_passNJets1", # FIKRI: We don't need these histograms for the dphi fits.
   ]
-  cutLevels += binNames
+  # cutLevels += binNames # FIKRI: We don't need these histograms for the dphi fits.
   cutLevels += cutNames
 
   ##############################################
