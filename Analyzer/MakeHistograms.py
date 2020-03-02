@@ -54,6 +54,7 @@ def main(sample_name):
   weightName = "evtWeight"
 
   df = df.Define("jet0_dimuon_dphi_norm","DeltaPhiNorm(jet0_dimuon_dphi)")
+  df = df.Define("jet0_dimuon_ptbalance","dimuon_pt/jet0_pt")
   if isMC:
     df = df.Define("passGenMatch","jet0_gen_match")
   #############################################
@@ -66,7 +67,7 @@ def main(sample_name):
   df_filters["passOS_passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
 
   #
-  # Define eta bins
+  # Define jet0 eta bins
   #
   etaBins = OrderedDict()
   etaBins["eta0p0To1p479"] = "(fabs(jet0_eta) > 0.0)   && (fabs(jet0_eta) <= 1.479)"
@@ -84,9 +85,10 @@ def main(sample_name):
   ptBins["pt30To40"]  = "(jet0_pt > 30.) && (jet0_pt <= 40.)"
   ptBins["pt40To50"]  = "(jet0_pt > 40.) && (jet0_pt <= 50.)"
   ptBins["pt50To60"]  = "(jet0_pt > 50.) && (jet0_pt <= 60.)"
-  # ptBins["pt60To80"]  = "(jet0_pt > 60.) && (jet0_pt <= 80.)"
-  # ptBins["pt80To100"] = "(jet0_pt > 80.) && (jet0_pt <= 100.)"
 
+  #
+  # apply jet0 eta and pt cuts at the same time
+  #
   binNames = []
   for eta in etaBins:
     for pt in ptBins:
@@ -108,6 +110,52 @@ def main(sample_name):
         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
         df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
         binNames.append(cutNameStr)
+  
+  #
+  # Define PU Id cuts
+  #
+  puIDCuts = OrderedDict()
+  puIDCuts["passPUIDLoose"]  = "(jet0_puId == 4)"
+  puIDCuts["passPUIDMedium"] = "(jet0_puId == 6)"
+  puIDCuts["passPUIDTight"]  = "(jet0_puId == 7)"
+  # puIDCuts["failPUIDLoose"]  = "(jet0_puId != 4)"
+  # puIDCuts["failPUIDMedium"] = "(jet0_puId != 6)"
+  # puIDCuts["failPUIDTight"]  = "(jet0_puId != 7)"
+
+  #
+  # Define pt balance cuts
+  #
+  ptBalanceCuts = OrderedDict()
+  ptBalanceCuts["ptBal0p0To0p5"] = "jet0_dimuon_ptbalance<0.5"
+  ptBalanceCuts["ptBal0p5To1p5"] = "(jet0_dimuon_ptbalance>=0.5) && (jet0_dimuon_ptbalance<1.5)"
+
+  cutNames=[]
+  for binName in binNames:
+    #
+    # apply only ptBalance cut
+    #
+    for ptBalCut in ptBalanceCuts:
+      cutNameStr = binName + "_" + ptBalCut
+      filterStr  = ptBalanceCuts[ptBalCut]
+      df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
+      cutNames.append(cutNameStr)
+    #
+    # apply only the pu ID cut
+    #
+    for puIDCut in puIDCuts:
+      cutNameStr = binName + "_" + puIDCut
+      filterStr  = puIDCuts[puIDCut]
+      df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
+      cutNames.append(cutNameStr)
+    #
+    # apply ptBalance and puID at the same time
+    #
+    for ptBalCut in ptBalanceCuts:
+      for puIDCut in puIDCuts:
+        cutNameStr = binName + "_" + ptBalCut + "_" + puIDCut
+        filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
+        df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
+        cutNames.append(cutNameStr)
 
   ##############################################
   #
@@ -121,6 +169,7 @@ def main(sample_name):
     "passOS_passNJets1",
   ]
   cutLevels += binNames
+  cutLevels += cutNames
 
   ##############################################
   #
@@ -182,7 +231,12 @@ def main(sample_name):
   print("==============================")
 
 if __name__== "__main__":
+  #
+  # Run over all samples
+  #
   for sample_name in SampleList.Samples:
     main(sample_name)
+  #
   # combine all data histos into one root file
+  #
   os.system('hadd -f histos/Histo_Data16.root histos/Histo_Data16*_DoubleMuon.root')
