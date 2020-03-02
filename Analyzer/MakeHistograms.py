@@ -64,27 +64,27 @@ def main(sample_name):
   #############################################
   df_filters  = OrderedDict()
   df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
-  df_filters["passOS_passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
+  df_filters["passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
 
   #
   # Define jet0 eta bins
   #
   etaBins = OrderedDict()
   etaBins["eta0p0To1p479"] = "(fabs(jet0_eta) > 0.0)   && (fabs(jet0_eta) <= 1.479)"
-  etaBins["eta1p479To2p4"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
-  etaBins["eta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
-  etaBins["eta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
-  etaBins["eta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
-  etaBins["eta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
+  # etaBins["eta1p479To2p4"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
+  # etaBins["eta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
+  # etaBins["eta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
+  # etaBins["eta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
+  # etaBins["eta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
 
   #
   # Define jet0 pt bins
   #
   ptBins = OrderedDict()
   ptBins["pt20To30"]  = "(jet0_pt > 20.) && (jet0_pt <= 30.)"
-  ptBins["pt30To40"]  = "(jet0_pt > 30.) && (jet0_pt <= 40.)"
-  ptBins["pt40To50"]  = "(jet0_pt > 40.) && (jet0_pt <= 50.)"
-  ptBins["pt50To60"]  = "(jet0_pt > 50.) && (jet0_pt <= 60.)"
+  # ptBins["pt30To40"]  = "(jet0_pt > 30.) && (jet0_pt <= 40.)"
+  # ptBins["pt40To50"]  = "(jet0_pt > 40.) && (jet0_pt <= 50.)"
+  # ptBins["pt50To60"]  = "(jet0_pt > 50.) && (jet0_pt <= 60.)"
 
   #
   # apply jet0 eta and pt cuts at the same time
@@ -92,9 +92,9 @@ def main(sample_name):
   binNames = []
   for eta in etaBins:
     for pt in ptBins:
-      cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt
+      cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt
       filterStr  = etaBins[eta] + " && " + ptBins[pt]
-      df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+      df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
       binNames.append(cutNameStr)
       #
       # Gen Matching requirement
@@ -102,14 +102,14 @@ def main(sample_name):
       #
       # if isMC:
       #   #pass
-      #   cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
+      #   cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
       #   filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
-      #   df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+      #   df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
       #   binNames.append(cutNameStr)
       #   #fail
-      #   cutNameStr = "passOS_passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
+      #   cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
       #   filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
-      #   df_filters[cutNameStr] =  df_filters["passOS_passNJets1"].Filter(filterStr)
+      #   df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
       #   binNames.append(cutNameStr)
   
   #
@@ -149,11 +149,6 @@ def main(sample_name):
   #
   #############################################
   cutLevels = []
-  cutLevels += [
-    # "passOS", # FIKRI: We don't need these histograms for the dphi fits.
-    # "passOS_passNJets1", # FIKRI: We don't need these histograms for the dphi fits.
-  ]
-  # cutLevels += binNames # FIKRI: We don't need these histograms for the dphi fits.
   cutLevels += cutNames
 
   ##############################################
