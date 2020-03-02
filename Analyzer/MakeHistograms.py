@@ -71,20 +71,20 @@ def main(sample_name):
   #
   etaBins = OrderedDict()
   etaBins["eta0p0To1p479"] = "(fabs(jet0_eta) > 0.0)   && (fabs(jet0_eta) <= 1.479)"
-  # etaBins["eta1p479To2p4"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
-  # etaBins["eta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
-  # etaBins["eta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
-  # etaBins["eta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
-  # etaBins["eta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
+  etaBins["eta1p479To2p4"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
+  etaBins["eta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
+  etaBins["eta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
+  etaBins["eta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
+  etaBins["eta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
 
   #
   # Define jet0 pt bins
   #
   ptBins = OrderedDict()
   ptBins["pt20To30"]  = "(jet0_pt > 20.) && (jet0_pt <= 30.)"
-  # ptBins["pt30To40"]  = "(jet0_pt > 30.) && (jet0_pt <= 40.)"
-  # ptBins["pt40To50"]  = "(jet0_pt > 40.) && (jet0_pt <= 50.)"
-  # ptBins["pt50To60"]  = "(jet0_pt > 50.) && (jet0_pt <= 60.)"
+  ptBins["pt30To40"]  = "(jet0_pt > 30.) && (jet0_pt <= 40.)"
+  ptBins["pt40To50"]  = "(jet0_pt > 40.) && (jet0_pt <= 50.)"
+  ptBins["pt50To60"]  = "(jet0_pt > 50.) && (jet0_pt <= 60.)"
 
   #
   # apply jet0 eta and pt cuts at the same time
