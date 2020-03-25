@@ -100,17 +100,17 @@ def main(sample_name):
       # Gen Matching requirement
       # FIKRI: We don't need these histograms for the dphi fits.
       #
-      # if isMC:
-      #   #pass
-      #   cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
-      #   filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
-      #   df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
-      #   binNames.append(cutNameStr)
-      #   #fail
-      #   cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
-      #   filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
-      #   df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
-      #   binNames.append(cutNameStr)
+      if isMC:
+         #pass
+	 cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
+         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
+         df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+         binNames.append(cutNameStr)
+         #fail
+         cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
+         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
+         df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+         binNames.append(cutNameStr)
   
   #
   # Define PU Id cuts
