@@ -31,7 +31,7 @@ cmsenv
 
 Checkout this framework and [nanoAOD-tools](https://github.com/cms-nanoAOD/nanoAOD-tools):
 ```
-git clone git@github.com:nurfikri89/PUjetID.git PUjetID
+git clone git@github.com:abuubaidah89/PUjetID.git PUjetID
 git clone git@github.com:cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
 ```
 and then compile:
@@ -39,4 +39,20 @@ and then compile:
 scram b -j4
 ```
 
+### 2. Producing skimmed NanoAOD
 
+### 3. Make histograms from skimmed NanoAOD
+
+Only on lxplus7, source to the following Root for compatibality with RDataFrame. It is also best to do this in a new shell (without running cmsenv) to avoid any complication:
+```
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
+```
+Run the MakeHistograms script:
+```
+cd PUJetID/Analyzer/
+python MakeHistograms.py
+```
+Plot the histograms:
+```
+python PlotHistograms.py
+```
