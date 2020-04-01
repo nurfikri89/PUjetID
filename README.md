@@ -21,9 +21,8 @@ Setup a CMSSW release:
 ```
 mkdir PUJetIdStudies
 cd PUJetIdStudies
-export SCRAM_ARCH=slc7_amd64_gcc700
-cmsrel CMSSW_10_2_15
-cd CMSSW_10_2_15/src
+cmsrel CMSSW_10_2_18
+cd CMSSW_10_2_18/src
 cmsenv
 ```
 
@@ -31,7 +30,7 @@ cmsenv
 
 Checkout this framework and [nanoAOD-tools](https://github.com/cms-nanoAOD/nanoAOD-tools):
 ```
-git clone git@github.com:abuubaidah89/PUjetID.git PUjetID
+git clone git@github.com:nurfikri89/PUjetID.git PUjetID
 git clone git@github.com:cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
 ```
 and then compile:
@@ -43,10 +42,14 @@ scram b -j4
 
 ### 3. Make histograms from skimmed NanoAOD
 
-Only on lxplus7, source to the following Root for compatibality with RDataFrame. It is also best to do this in a new shell (without running cmsenv) to avoid any complication:
+Only on lxplus7, source the following ROOT version:
 ```
-source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
+source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.04/x86_64-centos7-gcc48-opt/bin/thisroot.sh
 ```
+This is needed for ```RDataFrame``` which is used to process the skim ntuples. 
+You should also do this in a new shell (without loading CMSSW by calling ```cmsenv```) 
+to avoid any complications with different ROOT versions
+
 Run the MakeHistograms script:
 ```
 cd PUJetID/Analyzer/
