@@ -1,0 +1,118 @@
+\documentclass{beamer}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{frametitle}{
+  \vspace{0.05mm}
+  \insertframetitle
+}
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=1.5mm,text margin right=0.2mm} 
+\setbeamerfont{frametitle}{size=\normalsize}
+
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\usepackage{booktabs}
+\usepackage[labelformat=empty]{caption}
+\captionsetup{font=small,labelfont=small,justification=centering}
+
+\usepackage{template}
+\renewcommand{\arraystretch}{0.01}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+\newcommand*{\ResDirLoose}{../results/2016_WPLoose}
+\newcommand*{\ResDirMedium}{../results/2016_WPMedium}
+\newcommand*{\ResDirTight}{../results/2016_WPTight}
+
+\begin{document}
+\begin{frame}{Content}
+\tableofcontents[hideallsubsections]
+\end{frame}
+\section{2016 Loose WP}
+\PlotsEffMistagSFVerTwo{\ResDirLoose}{2016_Loose}{Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{20To30_0p0To1p479}{$20 < p_{T} < 30$, $0.0 < |\eta| < 1.479$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{20To30_1p479To2p0}{$20 < p_{T} < 30$, $1.479 < |\eta| < 2.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{20To30_2p0To2p5}{$20 < p_{T} < 30$, $2.0 < |\eta| < 2.5$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{20To30_2p5To2p75}{$20 < p_{T} < 30$, $2.5 < |\eta| < 2.75$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{20To30_2p75To3p0}{$20 < p_{T} < 30$, $2.75 < |\eta| < 3.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{20To30_3p0To5p0}{$20 < p_{T} < 30$, $3.0 < |\eta| < 5.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{30To40_0p0To1p479}{$30 < p_{T} < 40$, $0.0 < |\eta| < 1.479$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{30To40_1p479To2p0}{$30 < p_{T} < 40$, $1.479 < |\eta| < 2.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{30To40_2p0To2p5}{$30 < p_{T} < 40$, $2.0 < |\eta| < 2.5$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{30To40_2p5To2p75}{$30 < p_{T} < 40$, $2.5 < |\eta| < 2.75$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{30To40_2p75To3p0}{$30 < p_{T} < 40$, $2.75 < |\eta| < 3.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{30To40_3p0To5p0}{$30 < p_{T} < 40$, $3.0 < |\eta| < 5.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{40To50_0p0To1p479}{$40 < p_{T} < 50$, $0.0 < |\eta| < 1.479$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{40To50_1p479To2p0}{$40 < p_{T} < 50$, $1.479 < |\eta| < 2.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{40To50_2p0To2p5}{$40 < p_{T} < 50$, $2.0 < |\eta| < 2.5$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{40To50_2p5To2p75}{$40 < p_{T} < 50$, $2.5 < |\eta| < 2.75$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{40To50_2p75To3p0}{$40 < p_{T} < 50$, $2.75 < |\eta| < 3.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{40To50_3p0To5p0}{$40 < p_{T} < 50$, $3.0 < |\eta| < 5.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{50To60_0p0To1p479}{$50 < p_{T} < 60$, $0.0 < |\eta| < 1.479$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{50To60_1p479To2p0}{$50 < p_{T} < 60$, $1.479 < |\eta| < 2.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{50To60_2p0To2p5}{$50 < p_{T} < 60$, $2.0 < |\eta| < 2.5$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{50To60_2p5To2p75}{$50 < p_{T} < 60$, $2.5 < |\eta| < 2.75$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{50To60_2p75To3p0}{$50 < p_{T} < 60$, $2.75 < |\eta| < 3.0$, Loose WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirLoose}{50To60_3p0To5p0}{$50 < p_{T} < 60$, $3.0 < |\eta| < 5.0$, Loose WP 2016}
+\section{2016 Medium WP}
+\PlotsEffMistagSFVerTwo{\ResDirMedium}{2016_Medium}{Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{20To30_0p0To1p479}{$20 < p_{T} < 30$, $0.0 < |\eta| < 1.479$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{20To30_1p479To2p0}{$20 < p_{T} < 30$, $1.479 < |\eta| < 2.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{20To30_2p0To2p5}{$20 < p_{T} < 30$, $2.0 < |\eta| < 2.5$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{20To30_2p5To2p75}{$20 < p_{T} < 30$, $2.5 < |\eta| < 2.75$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{20To30_2p75To3p0}{$20 < p_{T} < 30$, $2.75 < |\eta| < 3.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{20To30_3p0To5p0}{$20 < p_{T} < 30$, $3.0 < |\eta| < 5.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{30To40_0p0To1p479}{$30 < p_{T} < 40$, $0.0 < |\eta| < 1.479$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{30To40_1p479To2p0}{$30 < p_{T} < 40$, $1.479 < |\eta| < 2.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{30To40_2p0To2p5}{$30 < p_{T} < 40$, $2.0 < |\eta| < 2.5$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{30To40_2p5To2p75}{$30 < p_{T} < 40$, $2.5 < |\eta| < 2.75$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{30To40_2p75To3p0}{$30 < p_{T} < 40$, $2.75 < |\eta| < 3.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{30To40_3p0To5p0}{$30 < p_{T} < 40$, $3.0 < |\eta| < 5.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{40To50_0p0To1p479}{$40 < p_{T} < 50$, $0.0 < |\eta| < 1.479$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{40To50_1p479To2p0}{$40 < p_{T} < 50$, $1.479 < |\eta| < 2.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{40To50_2p0To2p5}{$40 < p_{T} < 50$, $2.0 < |\eta| < 2.5$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{40To50_2p5To2p75}{$40 < p_{T} < 50$, $2.5 < |\eta| < 2.75$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{40To50_2p75To3p0}{$40 < p_{T} < 50$, $2.75 < |\eta| < 3.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{40To50_3p0To5p0}{$40 < p_{T} < 50$, $3.0 < |\eta| < 5.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{50To60_0p0To1p479}{$50 < p_{T} < 60$, $0.0 < |\eta| < 1.479$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{50To60_1p479To2p0}{$50 < p_{T} < 60$, $1.479 < |\eta| < 2.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{50To60_2p0To2p5}{$50 < p_{T} < 60$, $2.0 < |\eta| < 2.5$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{50To60_2p5To2p75}{$50 < p_{T} < 60$, $2.5 < |\eta| < 2.75$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{50To60_2p75To3p0}{$50 < p_{T} < 60$, $2.75 < |\eta| < 3.0$, Medium WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirMedium}{50To60_3p0To5p0}{$50 < p_{T} < 60$, $3.0 < |\eta| < 5.0$, Medium WP 2016}
+\section{2016 Tight WP}
+\PlotsEffMistagSFVerTwo{\ResDirTight}{2016_Tight}{Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{20To30_0p0To1p479}{$20 < p_{T} < 30$, $0.0 < |\eta| < 1.479$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{20To30_1p479To2p0}{$20 < p_{T} < 30$, $1.479 < |\eta| < 2.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{20To30_2p0To2p5}{$20 < p_{T} < 30$, $2.0 < |\eta| < 2.5$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{20To30_2p5To2p75}{$20 < p_{T} < 30$, $2.5 < |\eta| < 2.75$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{20To30_2p75To3p0}{$20 < p_{T} < 30$, $2.75 < |\eta| < 3.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{20To30_3p0To5p0}{$20 < p_{T} < 30$, $3.0 < |\eta| < 5.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{30To40_0p0To1p479}{$30 < p_{T} < 40$, $0.0 < |\eta| < 1.479$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{30To40_1p479To2p0}{$30 < p_{T} < 40$, $1.479 < |\eta| < 2.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{30To40_2p0To2p5}{$30 < p_{T} < 40$, $2.0 < |\eta| < 2.5$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{30To40_2p5To2p75}{$30 < p_{T} < 40$, $2.5 < |\eta| < 2.75$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{30To40_2p75To3p0}{$30 < p_{T} < 40$, $2.75 < |\eta| < 3.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{30To40_3p0To5p0}{$30 < p_{T} < 40$, $3.0 < |\eta| < 5.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{40To50_0p0To1p479}{$40 < p_{T} < 50$, $0.0 < |\eta| < 1.479$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{40To50_1p479To2p0}{$40 < p_{T} < 50$, $1.479 < |\eta| < 2.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{40To50_2p0To2p5}{$40 < p_{T} < 50$, $2.0 < |\eta| < 2.5$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{40To50_2p5To2p75}{$40 < p_{T} < 50$, $2.5 < |\eta| < 2.75$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{40To50_2p75To3p0}{$40 < p_{T} < 50$, $2.75 < |\eta| < 3.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{40To50_3p0To5p0}{$40 < p_{T} < 50$, $3.0 < |\eta| < 5.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{50To60_0p0To1p479}{$50 < p_{T} < 60$, $0.0 < |\eta| < 1.479$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{50To60_1p479To2p0}{$50 < p_{T} < 60$, $1.479 < |\eta| < 2.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{50To60_2p0To2p5}{$50 < p_{T} < 60$, $2.0 < |\eta| < 2.5$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{50To60_2p5To2p75}{$50 < p_{T} < 60$, $2.5 < |\eta| < 2.75$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{50To60_2p75To3p0}{$50 < p_{T} < 60$, $2.75 < |\eta| < 3.0$, Tight WP 2016}
+\PlotsForEachBinDataAndMC{\ResDirTight}{50To60_3p0To5p0}{$50 < p_{T} < 60$, $3.0 < |\eta| < 5.0$, Tight WP 2016}
+\end{document}

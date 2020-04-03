@@ -1,0 +1,134 @@
+\newcommand{\PlotsForEachBin}[4]
+{
+\begin{frame}
+  \frametitle{#4}
+  \begin{figure}[ht]
+  \begin{minipage}[b]{0.30\linewidth}
+    \includegraphics[width=\textwidth]{#1/fit_#2_PASS_GOODbal_#3}
+    \caption{Pass ID, Good Balance}
+  \end{minipage}
+  \begin{minipage}[b]{0.30\linewidth}
+    \includegraphics[width=\textwidth]{#1/fit_#2_FAIL_GOODbal_#3}
+    \caption{Fail ID, Good Balance}
+  \end{minipage}
+  %
+  % Leave a blank line
+  %
+
+  \begin{minipage}[b]{0.30\linewidth}
+    \includegraphics[width=\textwidth]{#1/fit_#2_PASS_BADbal_#3}
+    \caption{Pass ID, Bad Balance}
+  \end{minipage}
+  \begin{minipage}[b]{0.30\linewidth}
+    \includegraphics[width=\textwidth]{#1/fit_#2_FAIL_BADbal_#3}
+    \caption{Fail ID, Bad Balance}
+  \end{minipage}
+  %
+  \end{figure}
+  \end{frame}
+}
+
+\newcommand{\PlotsForEachBinDataAndMC}[3]
+{
+\begin{frame}
+  \frametitle{#3}
+  \begin{figure}[t]
+    \begin{minipage}[t]{0.49\textwidth}%
+      \centering
+      \includegraphics[scale=0.16]{#1/fit_#2_PASS_GOODbal_data}
+      \includegraphics[scale=0.16]{#1/fit_#2_FAIL_GOODbal_data}\\
+      \includegraphics[scale=0.16]{#1/fit_#2_PASS_BADbal_data}
+      \includegraphics[scale=0.16]{#1/fit_#2_FAIL_BADbal_data}
+      \caption[]{Data}
+    \end{minipage}%
+    {\color{black}\vrule\hspace{4pt}}%
+    \begin{minipage}[t]{0.49\textwidth}%
+      \centering
+      \includegraphics[scale=0.16]{#1/fit_#2_PASS_GOODbal_mc}
+      \includegraphics[scale=0.16]{#1/fit_#2_FAIL_GOODbal_mc}\\
+      \includegraphics[scale=0.16]{#1/fit_#2_PASS_BADbal_mc}
+      \includegraphics[scale=0.16]{#1/fit_#2_FAIL_BADbal_mc}
+      \caption[]{MC}
+    \end{minipage}%
+  \end{figure}
+  \end{frame}
+}
+
+
+\newcommand{\PlotsEffMistagSF}[3]
+{
+\begin{frame}
+  \frametitle{#3}
+  \begin{figure}[ht]
+   \begin{minipage}[b]{0.32\linewidth}
+     \includegraphics[width=\textwidth]{#1/h2_eff_data_#2}
+     % \caption{Eff Data}
+  \end{minipage}
+  %
+   \begin{minipage}[b]{0.32\linewidth}
+     \includegraphics[width=\textwidth]{#1/h2_eff_mc_#2}
+     % \caption{Eff MC}
+  \end{minipage}
+  %
+   \begin{minipage}[b]{0.32\linewidth}
+     \includegraphics[width=\textwidth]{#1/h2_eff_sf_#2}
+     % \caption{Eff SF}
+  \end{minipage}
+  %
+   \begin{minipage}[b]{0.32\linewidth}
+     \includegraphics[width=\textwidth]{#1/h2_mistag_data_#2}
+     % \caption{Mistag Data}
+  \end{minipage}
+  %
+   \begin{minipage}[b]{0.32\linewidth}
+     \includegraphics[width=\textwidth]{#1/h2_mistag_mc_#2}
+     % \caption{Mistag MC}
+  \end{minipage}
+  %
+   \begin{minipage}[b]{0.32\linewidth}
+     \includegraphics[width=\textwidth]{#1/h2_mistag_sf_#2}
+     % \caption{Mistag SF}
+  \end{minipage}
+  %
+  \end{figure}
+\end{frame}
+}
+
+\newcommand{\PlotsEffMistagSFVerTwo}[3]
+{
+  \begin{frame}
+    \frametitle{Efficiency SF (#3)}
+    \begin{figure}[ht]
+      \includegraphics[width=0.72\textwidth]{#1/h2_eff_sf_#2}
+    \end{figure}
+  \end{frame}
+  \begin{frame}
+    \frametitle{Efficiency in Data and MC (#3)}
+    \begin{figure}[ht]
+      \begin{minipage}[b]{0.49\linewidth}
+        \includegraphics[width=\textwidth]{#1/h2_eff_data_#2}
+      \end{minipage}
+      \begin{minipage}[b]{0.49\linewidth}
+        \includegraphics[width=\textwidth]{#1/h2_eff_mc_#2}
+      \end{minipage}
+    \end{figure}
+  \end{frame}
+  \begin{frame}
+    \frametitle{Mistag SF (#3)}
+    \begin{figure}[ht]
+      \includegraphics[width=0.72\textwidth]{#1/h2_mistag_sf_#2}
+    \end{figure}
+  \end{frame}
+  \begin{frame}
+    \frametitle{Mistag in Data and MC (#3)}
+    \begin{figure}[ht]
+      \begin{minipage}[b]{0.49\linewidth}
+        \includegraphics[width=\textwidth]{#1/h2_mistag_data_#2}
+      \end{minipage}
+      \begin{minipage}[b]{0.49\linewidth}
+       \includegraphics[width=\textwidth]{#1/h2_mistag_mc_#2}
+      \end{minipage}
+    \end{figure}
+  \end{frame}
+}
+
