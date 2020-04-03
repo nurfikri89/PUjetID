@@ -37,9 +37,7 @@ print "maxEvents  = ", maxEvents
 print "outDir  = ", outDir
 
 CMSXROOTD="root://xrootd-cms.infn.it/"
-
 files=[]
-
 if era == "2016":
   if isMC:
     files = [
@@ -53,7 +51,7 @@ if era == "2016":
 varTxtFileIn="./script/branches_in.txt"
 varTxtFileOut="./script/branches_out.txt"
 
-selection="(1)"
+selection= "nMuon>=1 && Muon_pt[0]>17. && nJet >=1"
 
 modules = []
 jsonInput = None
@@ -61,18 +59,21 @@ jsonInput = None
 CMSSW_BASE = os.getenv('CMSSW_BASE')
 
 if era == "2016":
+  selection += " && HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ"
   if isMC: 
     modules=[puWeight_2016(), SkimmerDiMuon_2016_mc()]
   else:              
     modules=[SkimmerDiMuon_2016_data()]
     jsonInput=CMSSW_BASE+"/src/PUjetID/Skimmer/data/lumi/Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt"
 elif era == "2017":
+  selection += " && HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8"
   if isMC: 
     modules=[puWeight_2017(), SkimmerDiMuon_2017_mc()]
   else:              
     modules=[SkimmerDiMuon_2017_data()]
     jsonInput=CMSSW_BASE+"/src/PUjetID/Skimmer/data/lumi/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt"
 elif era == "2018":
+  selection += " && HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8"
   if isMC: 
     modules=[puWeight_2018(), SkimmerDiMuon_2018_mc()]
   else:              
@@ -86,7 +87,6 @@ maxEntries=None
 if maxEvents > 0:
   maxEntries=maxEvents
   print "Maximum Number of Events to run over: ", maxEvents
-
 
 p=PostProcessor(
   outDir, 

@@ -15,23 +15,6 @@ keep Generator_*
 keep Pileup_*
 keep PV_*
 #
-keep LHEWeight_originalXWGTUP
-keep nLHEPdfWeight
-keep LHEPdfWeight
-keep nLHEReweightingWeight
-keep LHEReweightingWeight
-keep nLHEScaleWeight
-keep LHEScaleWeight
-keep nPSWeight
-keep PSWeight
-#
-#keep nCorrT1METJet
-#keep CorrT1METJet_*
-#
-keep GenMET_*
-keep MET_*
-keep PuppiMET_*
-#
 keep nMuon
 keep Muon_*
 keep nJet

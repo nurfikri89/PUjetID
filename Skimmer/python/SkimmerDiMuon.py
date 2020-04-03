@@ -13,7 +13,7 @@ class SkimmerDiMuon(Module):
     self.era = era
     self.isMC = isMC
     self.writeHistFile=True
-    self.maxNSelJetsSaved=2
+    self.maxNSelJetsSaved=1
 
   def beginJob(self, histFile, histDirName):
     Module.beginJob(self, histFile, histDirName)
@@ -26,6 +26,7 @@ class SkimmerDiMuon(Module):
     self.h_cutflow_uw.GetXaxis().SetBinLabel(6,"passTrigMatch")
     self.h_cutflow_uw.GetXaxis().SetBinLabel(7,"passKinCuts")
     self.h_cutflow_uw.GetXaxis().SetBinLabel(8,"passZBosonMass")
+    self.h_cutflow_uw.GetXaxis().SetBinLabel(9,"passAtLeast1Jet")
     self.addObject(self.h_cutflow_uw)
 
     self.h_cutflow_w  = ROOT.TH1F('h_cutflow_w', 'h_cutflow_w',  15, 0, 15)
@@ -37,6 +38,7 @@ class SkimmerDiMuon(Module):
     self.h_cutflow_w.GetXaxis().SetBinLabel(6,"passTrigMatch")
     self.h_cutflow_w.GetXaxis().SetBinLabel(7,"passKinCuts")
     self.h_cutflow_w.GetXaxis().SetBinLabel(8,"passZBosonMass")
+    self.h_cutflow_w.GetXaxis().SetBinLabel(9,"passAtLeast1Jet")
     self.addObject(self.h_cutflow_w)
 
   def endJob(self):
@@ -151,7 +153,7 @@ class SkimmerDiMuon(Module):
     # Tight selection
     #
     muonsTight  = [x for x in muonsLoose 
-      if x.tightId and x.pfIsoId >= 4
+      if x.tightId and x.pfIsoId >= 4 and x.isPFcand 
     ] 
 
     #
@@ -209,6 +211,13 @@ class SkimmerDiMuon(Module):
     ]
     jetsSel.sort(key=lambda x:x.pt,reverse=True)
     nJetSel=len(jetsSel)
+
+    #
+    # Check if event has at least one selected jets
+    #
+    passAtLeast1Jet = nJetSel >= 1
+    if not passAtLeast1Jet: return False
+    self.RegisterCut("passAtLeast1Jet", evtWeight)
     
     #
     # Match genjets to the selected reco jets
@@ -235,7 +244,7 @@ class SkimmerDiMuon(Module):
     self.out.fillBranch("nJetSel",      nJetSel)
     #
     # Reset branch. 
-    # NOTE:FIKRI: This is stupid. Surely can be simplified.
+    # NOTE: Can it be simplified?
     #
     for i in xrange(0, self.maxNSelJetsSaved):
       self.out.fillBranch("jet"+str(i)+"_pt",     -9.)
@@ -263,7 +272,7 @@ class SkimmerDiMuon(Module):
         self.out.fillBranch("jet"+str(i)+"_gen_partflav", -9)
         self.out.fillBranch("jet"+str(i)+"_gen_hadflav",  -9)
     #
-    # Store the jets
+    # Store jets
     #
     for i, jet in enumerate(jetsSel):
       if i >= self.maxNSelJetsSaved: break
