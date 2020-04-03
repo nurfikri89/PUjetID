@@ -1,48 +1,47 @@
 import sys
 import os
 import glob
-import ROOT
+import argparse
 from collections import OrderedDict 
+
+import ROOT
 import VariableList
 import SampleList
+
 ROOT.gROOT.SetBatch()
 ROOT.gROOT.LoadMacro("./Helpers.h")
 
 #
-# Only on lxplus7
-# source /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.00/x86_64-centos7-gcc48-opt/bin/thisroot.sh
 #
-EOSURL=SampleList.EOSURL
-treeName="Events"
-
-ROOT.ROOT.EnableImplicitMT(8)
+varNamesToPlot = [
+"jet0_dimuon_dphi_norm"
+]
 
 def main(sample_name):
-  timer = ROOT.TStopwatch()
-  timer.Start()
-  print("==============================")
-  print("Running %s" %sample_name)
 
   FileList = []
-  for files in SampleList.Samples[sample_name].files:
-    # print("Processing %s" %files)
-    FileList += [EOSURL+f for f in glob.glob(files)]
+
+  for files in SampleList.Samples[sample_name].crabFiles:
+    FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+
+  # for files in SampleList.Samples[sample_name].ntupleFiles:
+  #   FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
 
   for f in FileList:
     vec.push_back(f)
-
+  
   # Read all files into RDataFrame
-  df = ROOT.ROOT.RDataFrame(treeName, vec)
+  df = ROOT.ROOT.RDataFrame("Events", vec)
   isMC = False
   if "MC" in sample_name:
     isMC = True
 
   #############################################
   #
-  # Define variables
+  # Set columns in RDataFrame
   #
   #############################################
   # Define evtWeight variable
@@ -57,6 +56,7 @@ def main(sample_name):
   df = df.Define("jet0_dimuon_ptbalance","dimuon_pt/jet0_pt")
   if isMC:
     df = df.Define("passGenMatch","jet0_gen_match")
+
   #############################################
   #
   # Define Filters
@@ -65,17 +65,31 @@ def main(sample_name):
   df_filters  = OrderedDict()
   df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
   df_filters["passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
-
   #
   # Define jet0 eta bins
   #
   etaBins = OrderedDict()
-  etaBins["eta0p0To1p479"] = "(fabs(jet0_eta) > 0.0)   && (fabs(jet0_eta) <= 1.479)"
-  etaBins["eta1p479To2p4"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
-  etaBins["eta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
-  etaBins["eta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
-  etaBins["eta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
-  etaBins["eta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
+  # Abs(eta)
+  etaBins["abseta0p0To1p479"] = "(fabs(jet0_eta) > 0.0)   && (fabs(jet0_eta) <= 1.479)"
+  etaBins["abseta1p479To2p0"] = "(fabs(jet0_eta) > 1.479) && (fabs(jet0_eta) <= 2.0)"
+  etaBins["abseta2p0To2p5"]   = "(fabs(jet0_eta) > 2.0)   && (fabs(jet0_eta) <= 2.5)"
+  etaBins["abseta2p5To2p75"]  = "(fabs(jet0_eta) > 2.5)   && (fabs(jet0_eta) <= 2.75)"
+  etaBins["abseta2p75To3p0"]  = "(fabs(jet0_eta) > 2.75)  && (fabs(jet0_eta) <= 3.00)"
+  etaBins["abseta3p0To5p0"]   = "(fabs(jet0_eta) > 3.0)   && (fabs(jet0_eta) <= 5.0)"
+  # positive eta
+  etaBins["eta0p0Topos1p479"]    = "(jet0_eta > 0.0)    && (jet0_eta <= 1.479)"
+  etaBins["etapos1p479Topos2p0"] = "(jet0_eta > 1.479)  && (jet0_eta <= 2.0)"
+  etaBins["etapos2p0Topos2p5"]   = "(jet0_eta > 2.0)    && (jet0_eta <= 2.5)"
+  etaBins["etapos2p5Topos2p75"]  = "(jet0_eta > 2.5)    && (jet0_eta <= 2.75)"
+  etaBins["etapos2p75Topos3p0"]  = "(jet0_eta > 2.75)   && (jet0_eta <= 3.00)"
+  etaBins["etapos3p0Topos5p0"]   = "(jet0_eta > 3.0)    && (jet0_eta <= 5.0)"
+  # negative eta
+  etaBins["etaneg1p479To0p0"]    = "(jet0_eta < 0.0)    && (jet0_eta >= -1.479)"
+  etaBins["etaneg2p0Toneg1p479"] = "(jet0_eta < -1.479) && (jet0_eta >= -2.0)"
+  etaBins["etaneg2p5Toneg2p0"]   = "(jet0_eta < -2.0)   && (jet0_eta >= -2.5)"
+  etaBins["etaneg2p75Toneg2p5"]  = "(jet0_eta < -2.5)   && (jet0_eta >= -2.75)"
+  etaBins["etaneg3p0Toneg2p75"]  = "(jet0_eta < -2.75)  && (jet0_eta >= -3.00)"
+  etaBins["etaneg5p0Toneg3p0"]   = "(jet0_eta < -3.0)   && (jet0_eta >= -5.0)"
 
   #
   # Define jet0 pt bins
@@ -98,30 +112,33 @@ def main(sample_name):
       binNames.append(cutNameStr)
       #
       # Gen Matching requirement
-      # FIKRI: We don't need these histograms for the dphi fits.
       #
       if isMC:
-         #pass
-	 cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
-         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
-         df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
-         binNames.append(cutNameStr)
-         #fail
-         cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
-         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
-         df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
-         binNames.append(cutNameStr)
-  
+        #
+        # Pass
+        #
+        cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_passGenMatch"
+        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
+        df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+        binNames.append(cutNameStr)
+        #
+        # Fail
+        #
+        cutNameStr = "passNJets1_jet0_"+ eta + "_" + pt +"_failGenMatch"
+        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
+        df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+        binNames.append(cutNameStr)
+
   #
   # Define PU Id cuts
   #
   puIDCuts = OrderedDict()
-  puIDCuts["passPUIDLoose"]  = "(jet0_puId == 4)"
-  puIDCuts["passPUIDMedium"] = "(jet0_puId == 6)"
-  puIDCuts["passPUIDTight"]  = "(jet0_puId == 7)"
-  puIDCuts["failPUIDLoose"]  = "(jet0_puId != 4)"
-  puIDCuts["failPUIDMedium"] = "(jet0_puId != 6)"
-  puIDCuts["failPUIDTight"]  = "(jet0_puId != 7)"
+  puIDCuts["passPUIDLoose"]  = "(jet0_puId >= 4)"
+  puIDCuts["passPUIDMedium"] = "(jet0_puId >= 6)"
+  puIDCuts["passPUIDTight"]  = "(jet0_puId >= 7)"
+  puIDCuts["failPUIDLoose"]  = "(jet0_puId < 4)"
+  puIDCuts["failPUIDMedium"] = "(jet0_puId < 6)"
+  puIDCuts["failPUIDTight"]  = "(jet0_puId < 7)"
 
   #
   # Define pt balance cuts
@@ -156,41 +173,40 @@ def main(sample_name):
   # Make the histograms
   #
   #############################################
-  # Create histogram dictionary
-  Histograms = {}
-  
+  Histograms = OrderedDict()
   #
   # Loop over cutLevels
   #
   for cutLevel in cutLevels:
     #
-    # Loop over histograms
+    # Loop over variables to plot
     #
-    for varName in VariableList.Variables:
+    for varName in varNamesToPlot:
       var = VariableList.Variables[varName]
       #
-      # Some exceptions (why??? FIKRI: It only makes sense to make jet0 related histograms after requiring >=1 jets)
+      # Some exceptions 
       #
-      if "jet0" in varName:
-        if "passNJets1" not in cutLevel:
-          continue
+      if "jet0" in varName and "passNJets1" not in cutLevel: continue
       #
       # Define full name for histogram
       #
       histoNameFinal  = "h_%s_%s" %(cutLevel,varName)
-      Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D((histoNameFinal, histoNameFinal+";"+var.xAxisName, var.nbins, var.xmin, var.xmax), var.varNameInTree,weightName)
-      print ("Creating histo: %s" %histoNameFinal)
+      histoInfo = (histoNameFinal, histoNameFinal+";"+var.xAxis+";"+var.yAxis, var.nbins, var.xmin, var.xmax)
+      Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D(histoInfo, var.varNameInTree, weightName)
+      # print ("Creating histo: %s" %histoNameFinal)
 
+  print("Number of histos: %s " %len(Histograms))
   numOfEvents = df.Count()
   print("Number of events in sample: %s " %numOfEvents.GetValue())
+
   ##############################################
   #
   # Save histograms in output rootfile
   #
   #############################################
   #
-  # Create histos directory
-  #
+  # Create directory for output
+  # 
   outDir = './histos/'
   if not(os.path.isdir(outDir)):
     os.mkdir(outDir)
@@ -206,17 +222,22 @@ def main(sample_name):
   f.Close()
   print("Histos saved in %s" %outFileName)
 
+if __name__== "__main__":
+  print("==============================")
+  timer = ROOT.TStopwatch()
+  timer.Start()
+
+  parser = argparse.ArgumentParser("")
+  parser.add_argument('-s', '--sample', type=str,  default="")
+  parser.add_argument('-c', '--cores',  type=int,  default=4)
+
+  args = parser.parse_args()
+  print "sample = %s" %(args.sample)
+  print "ncores = %d" %(args.cores)
+
+  ROOT.ROOT.EnableImplicitMT(args.cores)
+  main(args.sample)
   timer.Stop()
   timer.Print()
   print("==============================")
 
-if __name__== "__main__":
-  #
-  # Run over all samples
-  #
-  for sample_name in SampleList.Samples:
-    main(sample_name)
-  #
-  # combine all data histos into one root file
-  #
-  os.system('hadd -f histos/Histo_Data16.root histos/Histo_Data16*_DoubleMuon.root')
