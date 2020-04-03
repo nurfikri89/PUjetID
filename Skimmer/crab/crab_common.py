@@ -3,7 +3,7 @@ config = config()
 #
 # Set version number (CHECK)
 #
-version="DiMuonSkim_v0"
+version="DiMuonSkim_v1"
 #
 # Set request name prefx
 #
@@ -24,7 +24,6 @@ config.JobType.inputFiles = [
 '../script/branches_in.txt',
 '../script/branches_out.txt',
 '../RunSkimmerCrab.py',
-'../../../PhysicsTools/NanoAODTools/scripts/haddnano.py' #hadd nano will not be needed once nano tools are in cmssw
 ]
 #
 config.JobType.sendPythonFolder  = True
@@ -38,8 +37,14 @@ config.JobType.allowUndistributedCMSSW = True
 #
 # Specify the outLFNDirBase and your storage site
 #
+#
+# JetMET CMS EOS space at CERN
+#
 config.Data.outLFNDirBase  = '/store/group/phys_jetmet/CRABOUTPUT_JetPUId_'+version+'/'
 config.Site.storageSite    = 'T2_CH_CERN'
+#
+# User CERNBox 
+#
 # config.Data.outLFNDirBase  = '/store/user/nbinnorj/CRABOUTPUT_JetPUId_'+version+'/'
 # config.Site.storageSite    = 'T2_CH_CERNBOX'
 #
