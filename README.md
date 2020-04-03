@@ -1,17 +1,31 @@
 # Pileup JetID
 
-Repository for training, validation and store the weights for pileup jet ID.
-For more information please visit the twiki [PileupJetID](https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID).
 
-## For users
+## Setup framework
 
-The latest version of the weights is [94X_weights_DYJets_inc_v2](https://github.com/cms-jet/PUjetID/tree/94X_weights_DYJets_inc_v2). More instructions in the README.md file of the branch.
+Setup a CMSSW release:
+```
+mkdir PileUpJetIDSF
+cd PileUpJetIDSF
+cmsrel CMSSW_10_2_18
+cd CMSSW_10_2_18/src
+cmsenv
+```
+Checkout [nanoAOD-tools](https://github.com/cms-nanoAOD/nanoAOD-tools):
+```
+git clone git@github.com:cms-nanoAOD/nanoAOD-tools.git PhysicsTools/NanoAODTools
+```
+Checkout this framework and switch to this branch:
+```
+git clone git@github.com:cms-jet/PUjetID.git PUjetID
+cd PUjetID
+git checkout eff_analysis_nano_run2
+cd ${CMSSW_BASE}/src
+```
+and then compile:
+```
+scram b -j4
+```
 
-
-## For developers
-
-This is the _master_ branch, which only contains information about the package. 
- * [94X_weights_DYJets_inc_v2](https://github.com/cms-jet/PUjetID/tree/94X_weights_DYJets_inc_v2) is the latest version for 2018 data.
- * [fromJMEValidator](https://github.com/cms-jet/PUjetID/tree/fromJMEValidator) is the latest version for 2016 data.
-
+## Producing skimmed NanoAODs
 
