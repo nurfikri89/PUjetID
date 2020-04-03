@@ -1,0 +1,16 @@
+#
+# Drop everything
+#
+drop * 
+#
+# Here we start specifying what we want to store
+#
+keep run
+keep luminosityBlock
+keep event
+keep genWeight
+#
+keep Generator_*
+#
+keep Pileup_*
+keep PV_*

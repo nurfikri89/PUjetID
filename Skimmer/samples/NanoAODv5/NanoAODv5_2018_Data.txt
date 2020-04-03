@@ -1,0 +1,4 @@
+/DoubleMuon/Run2018A-Nano1June2019-v1/NANOAOD
+/DoubleMuon/Run2018B-Nano1June2019-v1/NANOAOD
+/DoubleMuon/Run2018C-Nano1June2019-v1/NANOAOD
+/DoubleMuon/Run2018D-Nano1June2019_ver2-v1/NANOAOD

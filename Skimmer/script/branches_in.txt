@@ -1,0 +1,29 @@
+#
+# Drop everything
+#
+drop * 
+#
+# Here we start specifying what we want to store
+#
+keep run
+keep luminosityBlock
+keep event
+keep genWeight
+#
+keep Generator_*
+#
+keep Pileup_*
+keep PV_*
+#
+keep nMuon
+keep Muon_*
+keep nJet
+keep Jet_*
+keep nGenJet
+keep GenJet_*
+keep nTrigObj
+keep TrigObj_*
+#
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
