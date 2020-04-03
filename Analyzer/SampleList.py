@@ -13,7 +13,6 @@ CRABDIR="JetPUId_"+version+"/CRABOUTPUT_JetPUId_"+version
 NTUPDIR="JetPUId_"+version+"/ntuples_skim_njet1"
 Samples = collections.OrderedDict()
 
-
 ################################################
 #
 # 2016
@@ -177,6 +176,25 @@ Samples["Data17F_DoubleMuon"] = Sample(
 # 2018
 #
 ################################################
+Samples["MC18_DY_MG"] = Sample(
+  name="MC18_DY_MG",
+  crabFiles=[
+    EOSJME+CRABDIR+"/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/JetPUId_MC18NanoAODv5-v1_"+version+"/*/*/tree_*.root",
+  ],
+  ntupleFiles=[
+    EOSJME+NTUPDIR+"/ntuple_MC18_DY_MG.root"
+  ]
+)
+Samples["MC18_DY_AMCNLO"] = Sample(
+  name="MC18_DY_AMCNLO",
+  crabFiles=[
+    EOSJME+CRABDIR+"/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/JetPUId_MC18NanoAODv5-v1_"+version+"/*/*/tree_*.root",
+    EOSJME+CRABDIR+"/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/JetPUId_MC18NanoAODv5_ext2-v1_"+version+"/*/*/tree_*.root",
+  ],
+  ntupleFiles=[
+    EOSJME+NTUPDIR+"/ntuple_MC18_DY_AMCNLO.root"
+  ]
+)
 Samples["Data18A_DoubleMuon"] = Sample(
   name="Data18A_DoubleMuon",
   crabFiles=[
@@ -213,22 +231,4 @@ Samples["Data18D_DoubleMuon"] = Sample(
     EOSJME+NTUPDIR+"/ntuple_Data18D_DoubleMuon.root"
   ]
 )
-Samples["MC18_DY_MG"] = Sample(
-  name="MC18_DY_MG",
-  crabFiles=[
-    EOSJME+CRABDIR+"/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/JetPUId_MC18NanoAODv5-v1_"+version+"/*/*/tree_*.root",
-  ],
-  ntupleFiles=[
-    EOSJME+NTUPDIR+"/ntuple_MC18_DY_MG.root"
-  ]
-)
-Samples["MC18_DY_AMCNLO"] = Sample(
-  name="MC18_DY_AMCNLO",
-  crabFiles=[
-    EOSJME+CRABDIR+"/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/JetPUId_MC18NanoAODv5-v1_"+version+"/*/*/tree_*.root",
-    EOSJME+CRABDIR+"/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/JetPUId_MC18NanoAODv5_ext2-v1_"+version+"/*/*/tree_*.root",
-  ],
-  ntupleFiles=[
-    EOSJME+NTUPDIR+"/ntuple_MC18_DY_AMCNLO.root"
-  ]
-)
+
