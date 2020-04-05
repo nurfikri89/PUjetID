@@ -43,13 +43,11 @@ files=[]
 if era == "2016":
   if isMC:
     files = [
-      # CMSXROOTD+"/store/mc/RunIISummer16NanoAODv5/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano1June2019_102X_mcRun2_asymptotic_v7_ext1-v1/60000/6EE8EBFD-59F5-7742-ABAF-F4411F449075.root"
-      "./MC16_DYJetsToLL_LO.root"
+      CMSXROOTD+"/store/mc/RunIISummer16NanoAODv5/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/NANOAODSIM/PUMoriond17_Nano1June2019_102X_mcRun2_asymptotic_v7_ext1-v1/60000/6EE8EBFD-59F5-7742-ABAF-F4411F449075.root"
     ]
   else:
     files = [
-      # CMSXROOTD+"/store/data/Run2016H/DoubleMuon/NANOAOD/Nano1June2019-v1/40000/7C7656AE-946A-C14F-9C66-53DB7F129C11.root"
-      "./Data16H_DoubleMuon.root"
+      CMSXROOTD+"/store/data/Run2016H/DoubleMuon/NANOAOD/Nano1June2019-v1/40000/7C7656AE-946A-C14F-9C66-53DB7F129C11.root"
     ]
 
 varTxtFileIn="./script/branches_in.txt"
