@@ -41,7 +41,7 @@ config.JobType.allowUndistributedCMSSW = True
 #
 # JetMET CMS EOS space at CERN
 #
-config.Data.outLFNDirBase  = '/store/group/phys_jetmet/CRABOUTPUT_JetPUId_'+version+'/'
+config.Data.outLFNDirBase  = '/store/group/phys_jetmet/nbinnorj/CRABOUTPUT_JetPUId_'+version+'/'
 config.Site.storageSite    = 'T2_CH_CERN'
 #
 # User CERNBox 
