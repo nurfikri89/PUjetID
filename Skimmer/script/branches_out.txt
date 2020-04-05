@@ -10,7 +10,21 @@ keep luminosityBlock
 keep event
 keep genWeight
 #
-keep Generator_*
+keep L1PreFiringWeight_*
 #
 keep Pileup_*
 keep PV_*
+#
+# Branches added by user
+#
+keep mu0*
+keep mu1*
+keep dimuon*
+#
+#
+keep nJetSel
+keep *jetSel*
+#
+# Branches added in output by modules in NanoAOD-tools (ALWAYS CHECK)
+#
+keep puWeight*

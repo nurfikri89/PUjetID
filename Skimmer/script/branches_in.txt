@@ -10,8 +10,6 @@ keep luminosityBlock
 keep event
 keep genWeight
 #
-keep Generator_*
-#
 keep Pileup_*
 keep PV_*
 #
