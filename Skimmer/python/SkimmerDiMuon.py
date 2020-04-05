@@ -12,42 +12,37 @@ class SkimmerDiMuon(Module):
   def __init__(self, isMC, era):
     self.era = era
     self.isMC = isMC
-    self.writeHistFile=True
     self.maxNSelJetsSaved=1
+    #
+    # List jet systematics
+    #
+    ak4Systematics=[
+      "jesTotalUp",
+      "jesTotalDown",
+      "jerUp"
+    ]
+    self.jetSystsList = [""] # Nominal
+    if self.isMC:
+      self.jetSystsList.extend(ak4Systematics)
 
-  def beginJob(self, histFile, histDirName):
-    Module.beginJob(self, histFile, histDirName)
-    self.h_cutflow_uw = ROOT.TH1F('h_cutflow_uw','h_cutflow_uw', 15, 0, 15)
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(1,"NoSelection")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(2,"passPreselTrig")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(3,"passPreselNMuon")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(4,"pass2LooseMuons")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(5,"pass2TightMuons")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(6,"passTrigMatch")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(7,"passKinCuts")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(8,"passZBosonMass")
-    self.h_cutflow_uw.GetXaxis().SetBinLabel(9,"passAtLeast1Jet")
-    self.addObject(self.h_cutflow_uw)
-
-    self.h_cutflow_w  = ROOT.TH1F('h_cutflow_w', 'h_cutflow_w',  15, 0, 15)
-    self.h_cutflow_w.GetXaxis().SetBinLabel(1,"NoSelection")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(2,"passPreselTrig")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(3,"passPreselNMuon")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(4,"pass2LooseMuons")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(5,"pass2TightMuons")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(6,"passTrigMatch")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(7,"passKinCuts")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(8,"passZBosonMass")
-    self.h_cutflow_w.GetXaxis().SetBinLabel(9,"passAtLeast1Jet")
-    self.addObject(self.h_cutflow_w)
+  def beginJob(self,histFile=None,histDirName=None):
+    Module.beginJob(self)
 
   def endJob(self):
     Module.endJob(self)
     print "SkimmerDiMuon module ended successfully"
     pass
-      
+
+  def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+    print "File closed successfully"
+    pass
+
   def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
-    self.out = wrappedOutputTree     
+    self.out = wrappedOutputTree
+    self.out.branch("dimuon_pt",   "F")
+    self.out.branch("dimuon_eta",  "F")
+    self.out.branch("dimuon_phi",  "F")
+    self.out.branch("dimuon_mass", "F")
     self.out.branch("mu0_pt",      "F")
     self.out.branch("mu0_eta",     "F")
     self.out.branch("mu0_phi",     "F")
@@ -58,260 +53,329 @@ class SkimmerDiMuon(Module):
     self.out.branch("mu1_phi",     "F")
     self.out.branch("mu1_mass",    "F")
     self.out.branch("mu1_charge",  "I")
-    self.out.branch("dimuon_pt",   "F")
-    self.out.branch("dimuon_eta",  "F")
-    self.out.branch("dimuon_phi",  "F")
-    self.out.branch("dimuon_mass", "F")
-    self.out.branch("nJetSel",     "I")
-    for i in xrange(0,self.maxNSelJetsSaved):
-      self.out.branch("jet"+str(i)+"_pt",         "F")
-      self.out.branch("jet"+str(i)+"_eta",        "F")
-      self.out.branch("jet"+str(i)+"_phi",        "F")
-      self.out.branch("jet"+str(i)+"_mass",       "F")
-      self.out.branch("jet"+str(i)+"_jetId",      "I")
-      self.out.branch("jet"+str(i)+"_puId",       "I")
-      self.out.branch("jet"+str(i)+"_qgl",        "F")
-      self.out.branch("jet"+str(i)+"_nConst",     "I")
-      self.out.branch("jet"+str(i)+"_chEmEF",     "F")
-      self.out.branch("jet"+str(i)+"_chHEF",      "F")
-      self.out.branch("jet"+str(i)+"_neEmEF",     "F")
-      self.out.branch("jet"+str(i)+"_neHEF",      "F")
-      self.out.branch("jet"+str(i)+"_muEF",       "F")
-      self.out.branch("jet"+str(i)+"_dimuon_dphi","F")
-      if(self.isMC):
-        self.out.branch("jet"+str(i)+"_partflav",     "I")
-        self.out.branch("jet"+str(i)+"_hadflav",      "I")
-        self.out.branch("jet"+str(i)+"_gen_match",    "B")
-        self.out.branch("jet"+str(i)+"_gen_pt",       "F")
-        self.out.branch("jet"+str(i)+"_gen_eta",      "F")
-        self.out.branch("jet"+str(i)+"_gen_phi",      "F")
-        self.out.branch("jet"+str(i)+"_gen_mass",     "F")
-        self.out.branch("jet"+str(i)+"_gen_partflav", "I")
-        self.out.branch("jet"+str(i)+"_gen_hadflav",  "I")
+    #
+    # Jet branches
+    #
+    for jetSyst in self.jetSystsList:
+      jetSystPreFix = self.getJetSystBranchPrefix(jetSyst)
+      self.out.branch(jetSystPreFix+"nJetSel", "I")
+      for i in xrange(0,self.maxNSelJetsSaved):
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_pt",         "F") 
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_pt_nom",     "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_eta",        "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_phi",        "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_mass",       "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_mass_nom",   "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_jetId",      "I")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_puId",       "I")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_qgl",        "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_nConst",     "I")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF",     "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_chHEF",      "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_neEmEF",     "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_neHEF",      "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_muEF",       "F")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_dimuon_dphi","F")
+        if(self.isMC):
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_partflav",     "I")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_hadflav",      "I")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_match",    "B")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_pt",       "F")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_eta",      "F")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_phi",      "F")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_mass",     "F")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_partflav", "I")
+          self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_gen_hadflav",  "I")
 
-  def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
-    print "File closed successfully"
-    pass
+  def getJetSystBranchPrefix(self, jetSyst):
+    jetSystPreFix = "" if jetSyst == "" else jetSyst+"_"
+    return jetSystPreFix
 
-  def RegisterCut(self, cutName, weight):
-    self.h_cutflow_uw.Fill(cutName,1)
-    self.h_cutflow_w.Fill(cutName, weight)
-          
+  def getJetSystBranchPostfix(self, jetSyst):
+    jetSystPreFix = "" if jetSyst == "" else "_"+jetSyst
+    return jetSystPreFix
+
+  def getJetPtAndMassForSyst(self, jetSyst):
+
+    if self.isMC:
+      jetPt   = "pt_nom"   if jetSyst == "" else "pt_"+jetSyst
+      jetMass = "mass_nom" if jetSyst == "" else "mass_"+jetSyst
+    else:
+      jetPt   = "pt"   #NOTE: Not necessarily true. We're not making any corrections to jets in data.
+      jetMass = "mass" #It has been applied at the NanoAOD production level.
+
+    return jetPt, jetMass
+
   def analyze(self, event):
     """process event, return True (go to next module) or False (fail, go to next event)"""
 
-    evtWeight = 1.0
-    if self.isMC:
-      evtWeight = event.genWeight
+    if self.passEventPreselection(event) is False:
+      return False
 
-    self.RegisterCut("NoSelection", evtWeight)
+    if self.passTriggerSelection(event) is False:
+      return False
 
+    if self.passZBosonSelection(event) is False:
+      return False 
+
+    self.fillZBosonBranches(event)
+    
+    #
+    # Skip event and don't store in tree if this selection doesn't pass nominal
+    # and any systematic shift
+    #
+    event.passJetSelNomSyst = False
+    
+    for jetSyst in self.jetSystsList:
+      self.resetJetBranches(event, jetSyst)
+      event.passJetSelNomSyst |= self.passJetSelection(event, jetSyst)
+      self.fillJetBranches(event, jetSyst)
+
+    if event.passJetSelNomSyst:
+      return True
+    else:
+      return False
+
+  def passEventPreselection(self, event):
     #######################
     #
     # Pre-selection
     #
     #######################
-    passPreselTrig=False
+
+    if event.PV_npvsGood < 1:
+      return False
+
+    event.evtWeight = 1.0
+    if self.isMC:
+      event.evtWeight = event.genWeight
+
+    # Event pass selection
+    return True
+
+  def passTriggerSelection(self, event):
+    #######################
+    #
+    # Trigger selection
+    #
+    #######################
+
+    event.passPreselTrig=False
 
     if self.era == "2016":
-      passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
+      event.passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
     elif self.era == "2017":
-      passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
+      event.passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
     elif self.era == "2018":
-      passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
+      event.passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
     
-    if not(passPreselTrig): return False
-    self.RegisterCut("passPreselTrig", evtWeight)
+    if not(event.passPreselTrig): return False
+    
+    # Event pass selection
+    return True
 
-    passPreselNMuon = event.nMuon >= 2
-    if not (passPreselNMuon): return False
-    self.RegisterCut("passPreselNMuon", evtWeight)
-
+  def passZBosonSelection(self, event):
     #######################
     #
     # Di-muon selection
     #
     #######################
-    muons = Collection(event, "Muon")
+    event.passPreselNMuon = event.nMuon >= 2
+    if not (event.passPreselNMuon): return False
+
+    event.muonsAll = Collection(event, "Muon")
   
     #
     # Loose selection
     #
-    muonsLoose  = [x for x in muons 
+    event.muonsLoose  = [x for x in event.muonsAll 
       if x.pt > 10. and x.looseId and abs(x.eta) < 2.4 and x.pfIsoId >= 2
     ]
-    muonsLoose.sort(key=lambda x:x.pt,reverse=True)
+    event.muonsLoose.sort(key=lambda x:x.pt,reverse=True)
 
     #
     # Check if event has EXACTLY 2 Loose muons
     #
-    pass2LooseMuons = len(muonsLoose) == 2
-    if not pass2LooseMuons: return False
-    self.RegisterCut("pass2LooseMuons", evtWeight)
+    event.pass2LooseMuons = len(event.muonsLoose) == 2
+    if not event.pass2LooseMuons: return False
 
     #
     # Tight selection
     #
-    muonsTight  = [x for x in muonsLoose 
+    event.muonsTight  = [x for x in event.muonsLoose 
       if x.tightId and x.pfIsoId >= 4 and x.isPFcand 
     ] 
 
     #
     # Check if event has EXACTLY 2 Tight muons
     #
-    pass2TightMuons = len(muonsTight) == 2
-    if not pass2TightMuons: return False
-    self.RegisterCut("pass2TightMuons", evtWeight)
+    event.pass2TightMuons = len(event.muonsTight) == 2
+    if not event.pass2TightMuons: return False
     
     # 
     # Trigger matching
     #
-    passMuon0TrigMatch = False
-    passMuon1TrigMatch = False
-    trigObjs = Collection(event, "TrigObj")
-    for obj in trigObjs:
+    event.passMuon0TrigMatch = False
+    event.passMuon1TrigMatch = False
+    event.trigObjsAll = Collection(event, "TrigObj")
+    for obj in event.trigObjsAll:
       if not(obj.id == 13):
         continue
-      if(muonsTight[0].DeltaR(obj) < 0.1): 
-        passMuon0TrigMatch = True
-      if(muonsTight[1].DeltaR(obj) < 0.1): 
-        passMuon1TrigMatch = True
+      if(event.muonsTight[0].DeltaR(obj) < 0.1): 
+        event.passMuon0TrigMatch = True
+      if(event.muonsTight[1].DeltaR(obj) < 0.1): 
+        event.passMuon1TrigMatch = True
 
-    if not (passMuon0TrigMatch and passMuon1TrigMatch): return False
-    self.RegisterCut("passTrigMatch", evtWeight)
+    if not (event.passMuon0TrigMatch and event.passMuon1TrigMatch): return False
 
     # 
     # Require each muon pt to be higher than the trigger thresholds
     #
-    if(muonsTight[0].pt < 20 or muonsTight[1].pt < 10):
+    if(event.muonsTight[0].pt < 20 or event.muonsTight[1].pt < 10):
       return False
-    self.RegisterCut("passKinCuts", evtWeight)
 
     #
-    # Reconstruct Z-boson 
+    # Reconstruct Z-boson p4
     #
-    zcand_p4 = muonsTight[0].p4() + muonsTight[1].p4()
+    event.zcand_p4 = event.muonsTight[0].p4() + event.muonsTight[1].p4()
 
     #
     # Z-boson mass cut
     #
-    if not (zcand_p4.M() > 70. and zcand_p4.M() < 110.):
+    if not (event.zcand_p4.M() > 70. and event.zcand_p4.M() < 110.):
       return False
-    self.RegisterCut("passZBosonMass", evtWeight)
+    
+    # Event pass selection
+    return True
 
+  def passJetSelection(self, event, jetSyst=""):
     #######################
     #
     # Jets selection
     #
     #######################
-    jets    = Collection(event, "Jet")
+    event.jetsAll = Collection(event, "Jet")
 
-    jetsSel = [x for x in jets 
-      if x.pt > 20. and abs(x.eta) < 5. and x.DeltaR(muonsTight[0]) > 0.4 and x.DeltaR(muonsTight[1]) > 0.4
+    #
+    # Get the name of the jet pt and jet mass branches 
+    # for nominal and systematic shifts
+    #
+    jetPtName, jetMassName = self.getJetPtAndMassForSyst(jetSyst)
+
+    event.jetsSel = [x for x in event.jetsAll 
+      if getattr(x, jetPtName) > 20. and abs(x.eta) < 5. and x.DeltaR(event.muonsTight[0]) > 0.4 and x.DeltaR(event.muonsTight[1]) > 0.4
     ]
-    jetsSel.sort(key=lambda x:x.pt,reverse=True)
-    nJetSel=len(jetsSel)
-
+    event.jetsSel.sort(key=lambda x:getattr(x, jetPtName), reverse=True)
+    event.nJetSel=len(event.jetsSel)
     #
     # Check if event has at least one selected jets
     #
-    passAtLeast1Jet = nJetSel >= 1
-    if not passAtLeast1Jet: return False
-    self.RegisterCut("passAtLeast1Jet", evtWeight)
-    
+    event.passAtLeast1Jet = event.nJetSel >= 1
+    if not event.passAtLeast1Jet: return False
     #
     # Match genjets to the selected reco jets
     #
     if self.isMC:
-      genJets = Collection(event, "GenJet")
-      pair = matchObjectCollection(jetsSel, genJets, dRmax=0.4)
-
-    # now fill branches
-    self.out.fillBranch("mu0_pt",       muonsTight[0].pt)
-    self.out.fillBranch("mu0_eta",      muonsTight[0].eta)
-    self.out.fillBranch("mu0_phi",      muonsTight[0].phi)
-    self.out.fillBranch("mu0_mass",     muonsTight[0].mass)
-    self.out.fillBranch("mu0_charge",   muonsTight[0].charge)
-    self.out.fillBranch("mu1_pt",       muonsTight[1].pt)
-    self.out.fillBranch("mu1_eta",      muonsTight[1].eta)
-    self.out.fillBranch("mu1_phi",      muonsTight[1].phi)
-    self.out.fillBranch("mu1_mass",     muonsTight[1].mass)
-    self.out.fillBranch("mu1_charge",   muonsTight[1].charge)
-    self.out.fillBranch("dimuon_pt",    zcand_p4.Pt())
-    self.out.fillBranch("dimuon_eta",   zcand_p4.Eta())
-    self.out.fillBranch("dimuon_phi",   zcand_p4.Phi())
-    self.out.fillBranch("dimuon_mass",  zcand_p4.M())
-    self.out.fillBranch("nJetSel",      nJetSel)
-    #
-    # Reset branch. 
-    # NOTE: Can it be simplified?
-    #
-    for i in xrange(0, self.maxNSelJetsSaved):
-      self.out.fillBranch("jet"+str(i)+"_pt",     -9.)
-      self.out.fillBranch("jet"+str(i)+"_eta",    -9.)
-      self.out.fillBranch("jet"+str(i)+"_phi",    -9.)
-      self.out.fillBranch("jet"+str(i)+"_mass",   -9.)
-      self.out.fillBranch("jet"+str(i)+"_jetId",  -9)
-      self.out.fillBranch("jet"+str(i)+"_puId",   -9)
-      self.out.fillBranch("jet"+str(i)+"_qgl",    -9.)
-      self.out.fillBranch("jet"+str(i)+"_nConst", -9)
-      self.out.fillBranch("jet"+str(i)+"_chEmEF", -9.)
-      self.out.fillBranch("jet"+str(i)+"_chHEF",  -9.)
-      self.out.fillBranch("jet"+str(i)+"_neEmEF", -9.)
-      self.out.fillBranch("jet"+str(i)+"_neHEF",  -9.)
-      self.out.fillBranch("jet"+str(i)+"_muEF",   -9.)
-      self.out.fillBranch("jet"+str(i)+"_dimuon_dphi",-9.)
-      if self.isMC:
-        self.out.fillBranch("jet"+str(i)+"_partflav",-9)
-        self.out.fillBranch("jet"+str(i)+"_hadflav", -9)
-        self.out.fillBranch("jet"+str(i)+"_gen_match", False)
-        self.out.fillBranch("jet"+str(i)+"_gen_pt",      -9.)
-        self.out.fillBranch("jet"+str(i)+"_gen_eta",     -9.)
-        self.out.fillBranch("jet"+str(i)+"_gen_phi",     -9.)
-        self.out.fillBranch("jet"+str(i)+"_gen_mass",    -9.)
-        self.out.fillBranch("jet"+str(i)+"_gen_partflav", -9)
-        self.out.fillBranch("jet"+str(i)+"_gen_hadflav",  -9)
-    #
-    # Store jets
-    #
-    for i, jet in enumerate(jetsSel):
-      if i >= self.maxNSelJetsSaved: break
-      self.out.fillBranch("jet"+str(i)+"_pt",     jet.pt)
-      self.out.fillBranch("jet"+str(i)+"_eta",    jet.eta)
-      self.out.fillBranch("jet"+str(i)+"_phi",    jet.phi)
-      self.out.fillBranch("jet"+str(i)+"_mass",   jet.mass)
-      self.out.fillBranch("jet"+str(i)+"_jetId",  jet.jetId)
-      self.out.fillBranch("jet"+str(i)+"_puId",   jet.puId)
-      self.out.fillBranch("jet"+str(i)+"_qgl",    jet.qgl)
-      self.out.fillBranch("jet"+str(i)+"_nConst", jet.nConstituents)
-      self.out.fillBranch("jet"+str(i)+"_chEmEF", jet.chEmEF)
-      self.out.fillBranch("jet"+str(i)+"_chHEF",  jet.chHEF)
-      self.out.fillBranch("jet"+str(i)+"_neEmEF", jet.neEmEF)
-      self.out.fillBranch("jet"+str(i)+"_neHEF",  jet.neHEF)
-      self.out.fillBranch("jet"+str(i)+"_muEF",   jet.muEF)
-      self.out.fillBranch("jet"+str(i)+"_dimuon_dphi",zcand_p4.DeltaPhi(jet.p4()))
-      if self.isMC:
-        self.out.fillBranch("jet"+str(i)+"_partflav",jet.partonFlavour)
-        self.out.fillBranch("jet"+str(i)+"_hadflav", jet.hadronFlavour)
-        genJet = pair[jet]
-        if not (genJet==None):
-          self.out.fillBranch("jet"+str(i)+"_gen_match", True)
-          self.out.fillBranch("jet"+str(i)+"_gen_pt",   genJet.pt)
-          self.out.fillBranch("jet"+str(i)+"_gen_eta",  genJet.eta)
-          self.out.fillBranch("jet"+str(i)+"_gen_phi",  genJet.phi)
-          self.out.fillBranch("jet"+str(i)+"_gen_mass", genJet.mass)
-          self.out.fillBranch("jet"+str(i)+"_gen_partflav", genJet.partonFlavour)
-          self.out.fillBranch("jet"+str(i)+"_gen_hadflav",  genJet.hadronFlavour)
+      event.genJetsAll = Collection(event, "GenJet")
+      event.pair = matchObjectCollection(event.jetsSel, event.genJetsAll, dRmax=0.4)
     #
     # The event pass selection
     #
     return True
 
+  def fillZBosonBranches(self, event):
+    self.out.fillBranch("dimuon_pt",    event.zcand_p4.Pt())
+    self.out.fillBranch("dimuon_eta",   event.zcand_p4.Eta())
+    self.out.fillBranch("dimuon_phi",   event.zcand_p4.Phi())
+    self.out.fillBranch("dimuon_mass",  event.zcand_p4.M())
+    self.out.fillBranch("mu0_pt",       event.muonsTight[0].pt)
+    self.out.fillBranch("mu0_eta",      event.muonsTight[0].eta)
+    self.out.fillBranch("mu0_phi",      event.muonsTight[0].phi)
+    self.out.fillBranch("mu0_mass",     event.muonsTight[0].mass)
+    self.out.fillBranch("mu0_charge",   event.muonsTight[0].charge)
+    self.out.fillBranch("mu1_pt",       event.muonsTight[1].pt)
+    self.out.fillBranch("mu1_eta",      event.muonsTight[1].eta)
+    self.out.fillBranch("mu1_phi",      event.muonsTight[1].phi)
+    self.out.fillBranch("mu1_mass",     event.muonsTight[1].mass)
+    self.out.fillBranch("mu1_charge",   event.muonsTight[1].charge)
+
+  def resetJetBranches(self, event, jetSyst):
+    #  reset jet branches
+    jetSystPreFix = self.getJetSystBranchPrefix(jetSyst)
+
+    self.out.fillBranch(jetSystPreFix+"nJetSel", -1)
+    for i in xrange(0, self.maxNSelJetsSaved):
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt",      -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt_nom",  -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_eta",     -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_phi",     -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass",    -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nom",-9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_jetId",  -9)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puId",   -9)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_qgl",    -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_nConst", -9)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF", -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_chHEF",  -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_neEmEF", -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_neHEF",  -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_muEF",   -9.)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_dimuon_dphi",-9.)
+      if self.isMC:
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_partflav",-9)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_hadflav", -9)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_match", False)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_pt",      -9.)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_eta",     -9.)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_phi",     -9.)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_mass",    -9.)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_partflav", -9)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_hadflav",  -9)
+
+  def fillJetBranches(self, event, jetSyst):
+    # fill jet branches
+    jetSystPreFix = self.getJetSystBranchPrefix(jetSyst)
+
+    # Get the name of the jet pt and jet mass branches 
+    # for nominal and systematic shifts
+    jetPtName, jetMassName = self.getJetPtAndMassForSyst(jetSyst)
+
+    self.out.fillBranch(jetSystPreFix+"nJetSel", event.nJetSel)
+    for i, jet in enumerate(event.jetsSel):
+      if i >= self.maxNSelJetsSaved: break
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt",      getattr(jet, jetPtName))
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt_nom",  getattr(jet, "pt_nom") if self.isMC else jet.pt)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_eta",     jet.eta)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_phi",     jet.phi)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass",    getattr(jet, jetMassName))
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nom",getattr(jet, "mass_nom") if self.isMC else jet.mass)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_jetId",   jet.jetId)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puId",    jet.puId)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_qgl",     jet.qgl)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_nConst",  jet.nConstituents)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF",  jet.chEmEF)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_chHEF",   jet.chHEF)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_neEmEF",  jet.neEmEF)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_neHEF",   jet.neHEF)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_muEF",    jet.muEF)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_dimuon_dphi",event.zcand_p4.DeltaPhi(jet.p4()))
+      if self.isMC:
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_partflav",jet.partonFlavour)
+        self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_hadflav", jet.hadronFlavour)
+        genJet = event.pair[jet]
+        if not (genJet==None):
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_match", True)
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_pt",   genJet.pt)
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_eta",  genJet.eta)
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_phi",  genJet.phi)
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_mass", genJet.mass)
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_partflav", genJet.partonFlavour)
+          self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_hadflav",  genJet.hadronFlavour)
+
 SkimmerDiMuon_2016_data = lambda : SkimmerDiMuon(isMC=False, era="2016") 
-SkimmerDiMuon_2016_mc   = lambda : SkimmerDiMuon(isMC=True,  era="2016") 
-#
 SkimmerDiMuon_2017_data = lambda : SkimmerDiMuon(isMC=False, era="2017") 
-SkimmerDiMuon_2017_mc   = lambda : SkimmerDiMuon(isMC=True,  era="2017") 
-#
 SkimmerDiMuon_2018_data = lambda : SkimmerDiMuon(isMC=False, era="2018") 
+
+SkimmerDiMuon_2016_mc   = lambda : SkimmerDiMuon(isMC=True,  era="2016") 
+SkimmerDiMuon_2017_mc   = lambda : SkimmerDiMuon(isMC=True,  era="2017") 
 SkimmerDiMuon_2018_mc   = lambda : SkimmerDiMuon(isMC=True,  era="2018") 
