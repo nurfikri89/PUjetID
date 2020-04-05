@@ -3,7 +3,6 @@ import crab_common
 import helpers
 
 crab_common.config.JobType.maxJobRuntimeMin = 600
-
 crab_common.config.JobType.scriptArgs = [
 'isMC=1',
 'era=2016',
@@ -51,5 +50,5 @@ if __name__ == '__main__':
     #
     print "requestName: ", requestName 
     print "outputDatasetTag: ", outputDatasetTag
-    crabCommand('submit', config = crab_2016_common.config)
+    crabCommand('submit', config = crab_common.config)
     print ""

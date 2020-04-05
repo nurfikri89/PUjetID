@@ -52,5 +52,5 @@ if __name__ == '__main__':
     #
     print "requestName: ", requestName 
     print "outputDatasetTag: ", outputDatasetTag
-    crabCommand('submit', config = crab_2016_common.config)
+    crabCommand('submit', config = crab_common.config)
     print ""

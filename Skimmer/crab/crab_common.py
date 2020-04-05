@@ -24,6 +24,7 @@ config.JobType.inputFiles = [
 '../script/branches_in.txt',
 '../script/branches_out.txt',
 '../RunSkimmerCrab.py',
+'../../../PhysicsTools/NanoAODTools/scripts/haddnano.py'
 ]
 #
 config.JobType.sendPythonFolder  = True
