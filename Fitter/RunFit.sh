@@ -1,4 +1,4 @@
-INDIR="./input/example/"
+INDIR="./input/DiMuonSkim_v2/"
 OUTDIR="./results/"
 
 python extract_fit.py  --input ${INDIR}  --output ${OUTDIR}/2016_WPLoose/  --year 2016 --wp Loose
