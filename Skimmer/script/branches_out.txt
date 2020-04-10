@@ -22,7 +22,7 @@ keep mu1*
 keep dimuon*
 #
 #
-keep nJetSel
+keep *nJetSel*
 keep *jetSel*
 #
 # Branches added in output by modules in NanoAOD-tools (ALWAYS CHECK)

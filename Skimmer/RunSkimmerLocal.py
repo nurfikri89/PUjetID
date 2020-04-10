@@ -116,8 +116,6 @@ p=PostProcessor(
   modules=modules,
   provenance=False,
   fwkJobReport=False,
-  histFileName=outDir+"/histo.root",
-  histDirName="cutflow",
   jsonInput=jsonInput if not(isMC) else None,
   maxEntries=maxEntries
 )

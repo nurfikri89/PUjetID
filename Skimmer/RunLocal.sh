@@ -1,4 +1,4 @@
-MAX_EVENTS=10000
+MAX_EVENTS=50000
 #
 #
 #
@@ -6,12 +6,12 @@ python RunSkimmerLocal.py \
 --era="2016" \
 --isMC=1 \
 --maxEvents=${MAX_EVENTS} \
---outDir="./MC2016_DYLL"
-#
-#
-#
+--outDir="./MC16_DYJetsToLL_LO"
+# 
+# 
+# 
 python RunSkimmerLocal.py \
 --era="2016" \
 --isMC=0 \
 --maxEvents=${MAX_EVENTS} \
---outDir="./Data2016_DoubleMuon"
+--outDir="./Data16H_DoubleMuon"

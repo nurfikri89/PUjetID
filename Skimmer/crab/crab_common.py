@@ -3,7 +3,7 @@ config = config()
 #
 # Set version number (CHECK)
 #
-version="DiMuonSkim_v1"
+version="DiMuonSkim_v2"
 #
 # Set request name prefx
 #
@@ -14,7 +14,7 @@ reqNamePrefix="JetPUId"
 #
 config.General.workArea        = '/afs/cern.ch/work/n/nbinnorj/private/crab_projects/'
 config.General.transferOutputs = True
-config.General.transferLogs    = True
+config.General.transferLogs    = False
 #
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName   = 'PSet.py'
@@ -28,7 +28,7 @@ config.JobType.inputFiles = [
 ]
 #
 config.JobType.sendPythonFolder  = True
-config.JobType.outputFiles = ['tree.root','histo.root']
+config.JobType.outputFiles = ['tree.root']
 #
 config.Data.splitting    = 'FileBased'
 config.Data.unitsPerJob  = 1
@@ -41,12 +41,12 @@ config.JobType.allowUndistributedCMSSW = True
 #
 # JetMET CMS EOS space at CERN
 #
-config.Data.outLFNDirBase  = '/store/group/phys_jetmet/nbinnorj/CRABOUTPUT_JetPUId_'+version+'/'
+config.Data.outLFNDirBase  = '/store/group/phys_jetmet/nbinnorj/JetPUId_'+version+'/CRABOUTPUT/'
 config.Site.storageSite    = 'T2_CH_CERN'
 #
 # User CERNBox 
 #
-# config.Data.outLFNDirBase  = '/store/user/nbinnorj/CRABOUTPUT_JetPUId_'+version+'/'
+# config.Data.outLFNDirBase  = '/store/user/nbinnorj/JetPUId_'+version+'/CRABOUTPUT/'
 # config.Site.storageSite    = 'T2_CH_CERNBOX'
 #
 config.Data.ignoreLocality = True

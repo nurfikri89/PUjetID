@@ -35,9 +35,8 @@ if __name__ == '__main__':
     #
     secondaryName = dataset.split('/')[2]
     secondaryName = secondaryName.replace("RunIISummer16NanoAODv6-","MC16NanoAODv6")#RENAME CAMPAIGN. CHECK ITS UPDATED
-    secondaryName = secondaryName.replace("_Nano25Oct2019","") #RENAME CAMPAIGN. CHECK ITS UPDATE
+    secondaryName = secondaryName.replace("PUMoriond17_Nano25Oct2019","") #RENAME CAMPAIGN. CHECK ITS UPDATE
     secondaryName = secondaryName.replace("_102X_mcRun2_asymptotic_v7","") #REMOVE GT. CHECK ITS UPDATED
-    secondaryName = secondaryName.replace("PUMoriond17","")  #CHECK
     secondaryName = secondaryName.replace("-v1","")# 
     secondaryName = secondaryName.replace("-v2","")# Remove any version indication.There should only be one valid version for MC samples
     #

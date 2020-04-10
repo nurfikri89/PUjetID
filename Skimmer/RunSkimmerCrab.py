@@ -98,8 +98,6 @@ p=PostProcessor(
   modules=modules,
   provenance=True,
   fwkJobReport=True,
-  histFileName="histo.root",
-  histDirName="cutflow",
   jsonInput=jsonInput if not(isMC) else None,
 )
 p.run()
