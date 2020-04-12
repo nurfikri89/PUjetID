@@ -26,6 +26,9 @@ and then compile:
 scram b -j4
 ```
 
+## Skim NanoAODs
+**:construction: UNDER CONSTRUCTION**
+
 ## Produce histograms for template fits
 
 All the scripts required to make the histogram templates are in the [**Analyzer**](./Analyzer) directory.
@@ -39,10 +42,16 @@ Producing the histograms is a two-step process. The steps are:
 
 1. Make skimmed ntuples for skimmed NanoAODs by using the [```SkimNtuples.py```](./Analyzer/SkimNtuples.py) script. This will make the histogram making step faster. Example to run the script can be found in [```RunLocal_SkimNtuples.sh```](./Analyzer/RunLocal_SkimNtuples.sh).
 
-2. Make histograms by running over the ntuples with the [```MakeHistograms.py```](./Analyzer/MakeHistograms.py) script. Example to run the script can be found in [```RunLocal_MakeHistograms.sh```](./Analyzer/RunLocal_MakeHistograms.sh) bash script.
+2. Make histograms by running over the ntuples with the [```MakeHistograms.py```](./Analyzer/MakeHistograms.py) script. Example to run the script can be found in [```RunLocal_MakeHistograms.sh```](./Analyzer/RunLocal_MakeHistograms.sh).
 
-The histograms will be saved in the ```histos``` directory. Run [```haddHistos.sh```](./Analyzer/RunLocal_MakeHistograms.sh) to merge all Data histograms for each year. The paths to the skimmed NanoAODs and skimmed ntuples are specified 
-in[```SampleList.py```](./Analyzer/SampleList.py).
+The histograms will be saved in the ```histos``` directory. Run [```haddHistos.sh```](./Analyzer/haddHistos.sh) to merge all Data histograms for each year. The paths to the skimmed NanoAODs and skimmed ntuples are specified in [```SampleList.py```](./Analyzer/SampleList.py).
 
+## Derive efficiency and mistag SFs by fitting templates 
 
+All the scripts required to make the histogram templates are in the [**Fitter**](./Fitter) directory.
 
+>**:exclamation:IMPORTANT** Use CMSSW's version of ROOT so you have to do ```cmsenv```. Just to be safe, do it in a clean shell.
+
+The fit is performed by using [```extract_fit.py```](./Fitter/extract_fit.py) script. Example to run the script is in [```RunFit.sh```](./Fitter/RunFit.sh). 
+
+>**NOTE** The input histograms in [```input/DiMuonSkim_v2```](./Fitter/input/DiMuonSkim_v2) was produced from ```NanoAODv6```.

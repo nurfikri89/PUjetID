@@ -40,7 +40,8 @@ def MakeDPhiFit(
     print "Performing fits to extract efficiency and mistag rate" 
     print("entries in PASS histos "+str(h_dphi_genunmatched_PASS.GetEntries())+","+str(h_dphi_genmatched_PASS.GetEntries())+","+str(h_dphi_PASS.GetEntries()))
     print("entries in FAIL histos "+str(h_dphi_genunmatched_FAIL.GetEntries())+","+str(h_dphi_genmatched_FAIL.GetEntries())+","+str(h_dphi_FAIL.GetEntries()))
-    print(pt+eta) 
+    print("ptBin:"+pt) 
+    print("etaBin:"+eta) 
     
     #
     #Declare the observable
