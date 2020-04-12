@@ -3,6 +3,7 @@ import os
 import glob
 import argparse
 from collections import OrderedDict 
+import datetime
 
 import ROOT
 import VariableList
@@ -135,14 +136,16 @@ def main(sample_name):
 
   #
   # Define PU Id cuts
+  # Guide on how to read the puID bitmap variable: 
+  # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID#miniAOD_and_nanoAOD
   #
   puIDCuts = OrderedDict()
-  puIDCuts["passPUIDLoose"]  = "(jetSel0_puId >= 4)"
-  puIDCuts["passPUIDMedium"] = "(jetSel0_puId >= 6)"
-  puIDCuts["passPUIDTight"]  = "(jetSel0_puId >= 7)"
-  puIDCuts["failPUIDLoose"]  = "(jetSel0_puId < 4)"
-  puIDCuts["failPUIDMedium"] = "(jetSel0_puId < 6)"
-  puIDCuts["failPUIDTight"]  = "(jetSel0_puId < 7)"
+  puIDCuts["passPUIDLoose"]  = "(jetSel0_puId & (1 << 2))"
+  puIDCuts["passPUIDMedium"] = "(jetSel0_puId & (1 << 1))"
+  puIDCuts["passPUIDTight"]  = "(jetSel0_puId & (1 << 0))"
+  puIDCuts["failPUIDLoose"]  = "!(jetSel0_puId & (1 << 2))"
+  puIDCuts["failPUIDMedium"] = "!(jetSel0_puId & (1 << 1))"
+  puIDCuts["failPUIDTight"]  = "!(jetSel0_puId & (1 << 0))"
 
   #
   # Define pt balance cuts
