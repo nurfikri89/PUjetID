@@ -1,4 +1,4 @@
-
+#!/bin/bash
 NCORES=4
 
 SAMPLES=(
@@ -25,15 +25,6 @@ Data18B_DoubleMuon
 Data18C_DoubleMuon
 Data18D_DoubleMuon
 )
-
-#
-# Skim ntuples
-#
-for SAMPLE in ${SAMPLES[@]}
-do
-  python SkimNtuples.py --sample $SAMPLE --cores $NCORES
-done
-
 #
 # Make histograms from ntuples
 #
