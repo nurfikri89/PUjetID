@@ -18,22 +18,23 @@ varNamesToPlot = [
   "jetSel0_dimuon_dphi_norm"
 ]
 
-def main(sample_name):
+def main(sample_name, useSkimNtuples):
 
   FileList = []
 
-  # print "Globbing File Paths:"
-  # for files in SampleList.Samples[sample_name].crabFiles:
-  #   print files
-  #   FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
-  print "Globbing File Paths:"
-  for files in SampleList.Samples[sample_name].ntupleFiles:
-    print files
-    FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+  if useSkimNtuples:
+    print "Globbing File Paths:"
+    for files in SampleList.Samples[sample_name].ntupleFiles:
+      print files
+      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+  else:
+    print "Globbing File Paths:"
+    for files in SampleList.Samples[sample_name].crabFiles:
+      print files
+      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
-
 
   for f in FileList:
     vec.push_back(f)
@@ -234,15 +235,17 @@ if __name__== "__main__":
   print("MakeHistograms.py::START::Time("+str(time_start)+")")
 
   parser = argparse.ArgumentParser("")
-  parser.add_argument('-s', '--sample', type=str,  default="")
-  parser.add_argument('-c', '--cores',  type=int,  default=4)
+  parser.add_argument('--sample',         dest='sample',         type=str,  default="")
+  parser.add_argument('--cores',          dest='cores',          type=int,  default=4)
+  parser.add_argument('--useSkimNtuples', dest='useSkimNtuples', action='store_true')
 
   args = parser.parse_args()
   print "sample = %s" %(args.sample)
   print "ncores = %d" %(args.cores)
+  print "useSkimNtuples = %r" %(args.useSkimNtuples)
 
   ROOT.ROOT.EnableImplicitMT(args.cores)
-  main(args.sample)
+  main(args.sample,args.useSkimNtuples)
 
   time_end = datetime.datetime.now()
   elapsed = time_end - time_start
