@@ -480,7 +480,6 @@ def main():
         "20To30",
         "30To40",
         "40To50",
-        "50To60"
     ]
     #
     # eta Binning
