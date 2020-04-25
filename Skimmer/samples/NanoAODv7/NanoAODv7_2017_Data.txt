@@ -1,0 +1,9 @@
+##
+## DATASET=/DoubleMuon/Run2017*02Apr2020*/NANOAOD
+## dasgoclient -query="dataset=$DATASET" > NanoAODv7_2017_Data.txt
+##
+/DoubleMuon/Run2017B-02Apr2020-v1/NANOAOD
+/DoubleMuon/Run2017C-02Apr2020-v1/NANOAOD
+/DoubleMuon/Run2017D-02Apr2020-v1/NANOAOD
+/DoubleMuon/Run2017E-02Apr2020-v1/NANOAOD
+/DoubleMuon/Run2017F-02Apr2020-v1/NANOAOD
