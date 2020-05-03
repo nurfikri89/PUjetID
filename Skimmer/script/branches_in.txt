@@ -15,6 +15,8 @@ keep PV_*
 #
 keep nMuon
 keep Muon_*
+keep nElectron
+keep Electron_*
 keep nJet
 keep Jet_*
 keep nGenJet
@@ -23,5 +25,7 @@ keep nTrigObj
 keep TrigObj_*
 #
 keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
+keep HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL
+keep HLT_TkMu17_TrkIsoVVL_TkMu8_TrkIsoVVL
 keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
 keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
