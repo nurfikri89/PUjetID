@@ -3,7 +3,7 @@ config = config()
 #
 # Set version number (CHECK)
 #
-version="DiMuonSkim_v2"
+version="DiMuonSkim_v3"
 #
 # Set request name prefx
 #
@@ -24,6 +24,7 @@ config.JobType.inputFiles = [
 '../script/branches_in.txt',
 '../script/branches_out.txt',
 '../RunSkimmerCrab.py',
+'../RunSkimmerHelper.py',
 '../../../PhysicsTools/NanoAODTools/scripts/haddnano.py'
 ]
 #

@@ -3,9 +3,11 @@ import crab_common
 import helpers
 
 crab_common.config.JobType.maxJobRuntimeMin = 720
+
 crab_common.config.JobType.scriptArgs = [
-'isMC=1',
-'era=2017',
+  'era=2017',
+  'isMC=1',
+  'dataStream=MC',
 ]
 
 if __name__ == '__main__':
