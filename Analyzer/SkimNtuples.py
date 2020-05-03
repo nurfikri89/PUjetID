@@ -38,18 +38,29 @@ def main(sample_name):
     #   "jesTotalDown",
     #   "jerUp"
     # ]
+
+  #############################################
+  #
+  # Define columns
+  #
+  #############################################
+  df = df.Define("passOS","lep0_charge * lep1_charge < 0.0")
+  df = df.Define("passNJetSel","(nJetSelPt30Eta5p0<=1)&&(nJetSelPt30Eta5p0<=1)")
+  if isMC:
+    for syst in ak4Systematics:
+      df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)")
+
   #############################################
   #
   # Define Filters
   #
   #############################################
   df_filters = OrderedDict()
-  df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
-  df_filters["passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
-
+  df_filters["passOS"] = df.Filter("passOS")
+  df_filters["passNJetSel"] = df_filters["passOS"].Filter("passNJetSel")
   if isMC:
     for syst in ak4Systematics:
-      df_filters["passNJets1_"+syst] = df_filters["passOS"].Filter(syst+"_nJetSel==1")
+      df_filters["passNJetSel_"+syst] = df_filters["passOS"].Filter("passNJetSel_"+syst)
 
   #############################################
   #
@@ -67,14 +78,17 @@ def main(sample_name):
   prefix=SampleList.EOSURL
   prefix+=SampleList.EOSDIR
   prefix+=SampleList.NTUPDIR
-  
+  #
+  #
+  #
+  initialCount = df.Count()
   #
   # Save events with exactly one jet
   #
   outTreeName="Events"
   outTreeFileName = "%sntuple_%s.root" %(prefix,sample_name)
   print "Save tree %s in file %s" %(outTreeName,outTreeFileName)
-  df_filters["passNJets1"].Snapshot(outTreeName, outTreeFileName) 
+  df_filters["passNJetSel"].Snapshot(outTreeName, outTreeFileName) 
   #
   # Do the same for MC with systematics
   #
@@ -83,7 +97,9 @@ def main(sample_name):
       outTreeName="Events_"+syst
       outTreeFileName = "%sntuple_%s_%s.root" %(prefix,sample_name,syst)
       print "Save tree %s in file %s" %(outTreeName,outTreeFileName)
-      df_filters["passNJets1_"+syst].Snapshot(outTreeName, outTreeFileName)
+      df_filters["passNJetSel_"+syst].Snapshot(outTreeName, outTreeFileName)
+
+  print "Initial Events in Tree: ", initialCount.GetValue()
 
 if __name__== "__main__":
   time_start = datetime.datetime.now()
