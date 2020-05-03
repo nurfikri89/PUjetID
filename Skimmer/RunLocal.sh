@@ -1,17 +1,25 @@
-MAX_EVENTS=50000
-#
+MAX_EVENTS=-1
 #
 #
 python RunSkimmerLocal.py \
 --era="2016" \
+--maxEvents=${MAX_EVENTS} \
+--outDir="./MC16_DYJetsToLL_NLO" \
 --isMC=1 \
---maxEvents=${MAX_EVENTS} \
---outDir="./MC16_DYJetsToLL_LO"
-# 
+--dataStream="MC"
 # 
 # 
 python RunSkimmerLocal.py \
 --era="2016" \
---isMC=0 \
 --maxEvents=${MAX_EVENTS} \
---outDir="./Data16H_DoubleMuon"
+--outDir="./Data16_DoubleMuon" \
+--isMC=0 \
+--dataStream="DoubleMuon"
+#
+#
+python RunSkimmerLocal.py \
+--era="2016" \
+--maxEvents=${MAX_EVENTS} \
+--outDir="./Data16_DoubleEG" \
+--isMC=0 \
+--dataStream="DoubleEG"

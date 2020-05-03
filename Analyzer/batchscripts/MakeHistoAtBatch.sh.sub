@@ -6,7 +6,9 @@ log                   = BatchLog/Histo.$(ClusterId).log
 stream_output         = True
 stream_error          = True
 
-+JobFlavour  = "microcentury"
+
+
++JobFlavour  = "longlunch"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (
@@ -18,7 +20,16 @@ MC17_DY_AMCNLO
 MC18_DY_AMCNLO
 )
 
-+JobFlavour  = "espresso"
++JobFlavour  = "microcentury"
+request_cpus = 4
+arguments    = $(SAMPLE) 4
+queue SAMPLE from (
+MC16_DY_MG_HW
+MC17_DY_MG_HW
+MC18_DY_MG_HW
+)
+
++JobFlavour  = "microcentury"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (
@@ -38,4 +49,20 @@ Data18A_DoubleMuon
 Data18B_DoubleMuon
 Data18C_DoubleMuon
 Data18D_DoubleMuon
+Data16B_DoubleEG
+Data16C_DoubleEG
+Data16D_DoubleEG
+Data16E_DoubleEG
+Data16F_DoubleEG
+Data16G_DoubleEG
+Data16H_DoubleEG
+Data17B_DoubleEG
+Data17C_DoubleEG
+Data17D_DoubleEG
+Data17E_DoubleEG
+Data17F_DoubleEG
+Data18A_EGamma
+Data18B_EGamma
+Data18C_EGamma
+Data18D_EGamma
 )

@@ -15,7 +15,7 @@ ROOT.gROOT.LoadMacro("./Helpers.h")
 #
 #
 varNamesToPlot = [
-  "jetSel0_dimuon_dphi_norm"
+  "jetSel0_dilep_dphi_norm"
 ]
 
 def main(sample_name, useSkimNtuples):
@@ -58,19 +58,30 @@ def main(sample_name, useSkimNtuples):
   # Define name for event weight
   weightName = "evtWeight"
 
-  df = df.Define("jetSel0_dimuon_dphi_norm","DeltaPhiNorm(jetSel0_dimuon_dphi)")
-  df = df.Define("jetSel0_dimuon_ptbalance","dimuon_pt/jetSel0_pt")
+  #############################################
+  #
+  # Define columns
+  #
+  #############################################
+  if not useSkimNtuples:
+    df = df.Define("passOS","lep0_charge * lep1_charge < 0.0")
+    df = df.Define("passNJetSel","(nJetSelPt30Eta5p0<=1)&&(nJetSelPt30Eta5p0<=1)")
+    if isMC:
+      for syst in ak4Systematics:
+        df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)") 
+
+  df = df.Define("jetSel0_dilep_dphi_norm","DeltaPhiNorm(jetSel0_dilep_dphi)")
+  df = df.Define("jetSel0_dilep_ptbalance","dilep_pt/jetSel0_pt")
   if isMC:
     df = df.Define("passGenMatch","jetSel0_gen_match")
-
   #############################################
   #
   # Define Filters
   #
   #############################################
   df_filters  = OrderedDict()
-  df_filters["passOS"] = df.Filter("mu0_charge * mu1_charge < 0.0")
-  df_filters["passNJets1"] = df_filters["passOS"].Filter("nJetSel==1")
+  df_filters["passOS"] = df.Filter("passOS")
+  df_filters["passNJetSel"] = df_filters["passOS"].Filter("passNJetSel")
   #
   # Define jetSel0 eta bins
   #
@@ -112,9 +123,9 @@ def main(sample_name, useSkimNtuples):
   binNames = []
   for eta in etaBins:
     for pt in ptBins:
-      cutNameStr = "passNJets1_jetSel0_"+ eta + "_" + pt
+      cutNameStr = "passNJetSel_jetSel0_"+ eta + "_" + pt
       filterStr  = etaBins[eta] + " && " + ptBins[pt]
-      df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+      df_filters[cutNameStr] =  df_filters["passNJetSel"].Filter(filterStr)
       binNames.append(cutNameStr)
       #
       # Gen Matching requirement
@@ -123,16 +134,16 @@ def main(sample_name, useSkimNtuples):
         #
         # Pass
         #
-        cutNameStr = "passNJets1_jetSel0_"+ eta + "_" + pt +"_passGenMatch"
+        cutNameStr = "passNJetSel_jetSel0_"+ eta + "_" + pt +"_passGenMatch"
         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
-        df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+        df_filters[cutNameStr] =  df_filters["passNJetSel"].Filter(filterStr)
         binNames.append(cutNameStr)
         #
         # Fail
         #
-        cutNameStr = "passNJets1_jetSel0_"+ eta + "_" + pt +"_failGenMatch"
+        cutNameStr = "passNJetSel_jetSel0_"+ eta + "_" + pt +"_failGenMatch"
         filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
-        df_filters[cutNameStr] =  df_filters["passNJets1"].Filter(filterStr)
+        df_filters[cutNameStr] =  df_filters["passNJetSel"].Filter(filterStr)
         binNames.append(cutNameStr)
 
   #
@@ -152,8 +163,8 @@ def main(sample_name, useSkimNtuples):
   # Define pt balance cuts
   #
   ptBalanceCuts = OrderedDict()
-  ptBalanceCuts["badBal"]  = "jetSel0_dimuon_ptbalance<0.5"
-  ptBalanceCuts["goodBal"] = "(jetSel0_dimuon_ptbalance>=0.5) && (jetSel0_dimuon_ptbalance<1.5)"
+  ptBalanceCuts["badBal"]  = "jetSel0_dilep_ptbalance<0.5"
+  ptBalanceCuts["goodBal"] = "(jetSel0_dilep_ptbalance>=0.5) && (jetSel0_dilep_ptbalance<1.5)"
 
   cutNames=[]
   for binName in binNames:
@@ -194,11 +205,12 @@ def main(sample_name, useSkimNtuples):
       #
       # Some exceptions 
       #
-      if "jetSel0" in varName and "passNJets1" not in cutLevel: continue
+      if "jetSel0" in varName and "passNJetSel" not in cutLevel: continue
       #
       # Define full name for histogram
       #
       histoNameFinal  = "h_%s_%s" %(cutLevel,varName)
+      print histoNameFinal
       histoInfo = (histoNameFinal, histoNameFinal+";"+var.xAxis+";"+var.yAxis, var.nbins, var.xmin, var.xmax)
       Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D(histoInfo, var.varNameInTree, weightName)
       # print ("Creating histo: %s" %histoNameFinal)

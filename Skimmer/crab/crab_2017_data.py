@@ -3,10 +3,10 @@ import crab_common
 import helpers
 
 crab_common.config.JobType.maxJobRuntimeMin = 480
-crab_common.config.JobType.scriptArgs = [
-'isMC=0',
-'era=2017',
-]
+
+def GetDataStream(name):
+  if "DoubleEG" in name:   return "DoubleEG"
+  if "DoubleMuon" in name: return "DoubleMuon"
 
 if __name__ == '__main__':
   #
@@ -25,6 +25,15 @@ if __name__ == '__main__':
   for i, dataset in enumerate(samplelist):
     print "%d/%d:Sending CRAB job: %s" % (i+1,len(samplelist), dataset)
     crab_common.config.Data.inputDataset = dataset
+    #
+    #
+    #
+    dataStreamName=GetDataStream(dataset)
+    crab_common.config.JobType.scriptArgs = [
+      'era=2017',
+      'isMC=0',
+      'dataStream='+dataStreamName,
+    ]
     #
     # Have to make unique requestName. 
     #

@@ -17,9 +17,9 @@ keep PV_*
 #
 # Branches added by user
 #
-keep mu0*
-keep mu1*
-keep dimuon*
+keep lep0*
+keep lep1*
+keep dilep*
 #
 #
 keep *nJetSel*

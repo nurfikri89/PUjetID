@@ -130,7 +130,8 @@ class SkimmerDiMuon(Module):
     
     for jetSyst in self.jetSystsList:
       self.resetJetBranches(event, jetSyst)
-      event.passJetSelNomSyst |= self.passJetSelection(event, jetSyst)
+      if self.passJetSelection(event, jetSyst):
+        event.passJetSelNomSyst |= True
       self.fillJetBranches(event, jetSyst)
 
     if event.passJetSelNomSyst:
@@ -165,7 +166,9 @@ class SkimmerDiMuon(Module):
     event.passPreselTrig=False
 
     if self.era == "2016":
-      event.passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
+      event.passPreselTrig |= event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
+      event.passPreselTrig |= event.HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL
+      event.passPreselTrig |= event.HLT_TkMu17_TrkIsoVVL_TkMu8_TrkIsoVVL
     elif self.era == "2017":
       event.passPreselTrig = event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
     elif self.era == "2018":
@@ -270,16 +273,16 @@ class SkimmerDiMuon(Module):
     event.jetsSel.sort(key=lambda x:getattr(x, jetPtName), reverse=True)
     event.nJetSel=len(event.jetsSel)
     #
-    # Check if event has at least one selected jets
-    #
-    event.passAtLeast1Jet = event.nJetSel >= 1
-    if not event.passAtLeast1Jet: return False
-    #
     # Match genjets to the selected reco jets
     #
     if self.isMC:
       event.genJetsAll = Collection(event, "GenJet")
       event.pair = matchObjectCollection(event.jetsSel, event.genJetsAll, dRmax=0.4)
+    #
+    # Check if event has at least one selected jets
+    #
+    event.passAtLeast1Jet = event.nJetSel >= 1
+    if not event.passAtLeast1Jet: return False
     #
     # The event pass selection
     #
