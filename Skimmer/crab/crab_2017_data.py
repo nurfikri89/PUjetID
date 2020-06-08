@@ -20,7 +20,6 @@ if __name__ == '__main__':
     print dataset
   print "\n\n"
 
-  from CRABClient.UserUtilities import getUsernameFromSiteDB
   from CRABAPI.RawCommand import crabCommand
   for i, dataset in enumerate(samplelist):
     print "%d/%d:Sending CRAB job: %s" % (i+1,len(samplelist), dataset)
