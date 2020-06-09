@@ -3,7 +3,7 @@ config = config()
 #
 # Set version number (CHECK)
 #
-version="DiMuonSkim_v3p1"
+version="DiMuonSkim_v3p2"
 #
 # Set request name prefx
 #
