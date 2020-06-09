@@ -47,16 +47,16 @@ files=[]
 if era == "2016":
   if isMC:
     files = [
-      "/store/mc/RunIISummer16NanoAODv6/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/PUMoriond17_Nano25Oct2019_102X_mcRun2_asymptotic_v7_ext2-v1/100000/9706CDAC-CBF7-DA42-B1F1-E199B81A704A.root"
+      "/store/mc/RunIISummer16NanoAODv7/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8_ext2-v1/120000/0643F6C0-C42B-564C-A9BD-161948BBFB81.root"
     ]
   else:
     if isDoubleMuonData:
       files = [
-        "/store/data/Run2016H/DoubleMuon/NANOAOD/Nano25Oct2019-v1/40000/8753C889-831B-2A48-AE53-E3EA7910458A.root",
+        "/store/data/Run2016H/DoubleMuon/NANOAOD/02Apr2020-v1/250000/24C37CC0-C415-5F43-96A6-F5D37E30B79B.root",
       ]
     elif isDoubleElecData:
       files = [
-        "/store/data/Run2016H/DoubleEG/NANOAOD/Nano25Oct2019-v1/260000/82D01E91-EC37-C64D-813B-2439F19BDA5B.root",
+        "/store/data/Run2016H/DoubleEG/NANOAOD/02Apr2020-v1/250000/47FD42C2-6583-D941-95F4-1BFF0061C7D5.root",
       ]
 
 CMSXROOTD="root://xrootd-cms.infn.it/"
