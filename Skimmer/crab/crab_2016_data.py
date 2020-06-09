@@ -41,7 +41,7 @@ if __name__ == '__main__':
     # TO DO: Fix This
     #
     secondaryName = dataset.split('/')[2]
-    secondaryName = secondaryName.replace("Nano25Oct2019","Data16NanoAODv6") #CHECK
+    secondaryName = secondaryName.replace("02Apr2020","Data16NanoAODv7") #CHECK
     #
     requestName = primaryName + "_" + secondaryName
     requestName = crab_common.reqNamePrefix + "_" + requestName + "_" + crab_common.version
