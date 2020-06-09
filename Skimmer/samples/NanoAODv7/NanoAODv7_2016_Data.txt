@@ -1,6 +1,8 @@
 ##
 ## DATASET=/DoubleMuon/Run2016*02Apr2020*/NANOAOD
-## dasgoclient -query="dataset=$DATASET" > NanoAODv7_2016_Data.txt
+## dasgoclient -query="dataset=$DATASET" >> NanoAODv7_2016_Data.txt
+## DATASET=/DoubleEG/Run2016*02Apr2020*/NANOAOD
+## dasgoclient -query="dataset=$DATASET" >> NanoAODv7_2016_Data.txt
 ##
 /DoubleMuon/Run2016B-02Apr2020-v1/NANOAOD
 /DoubleMuon/Run2016B-02Apr2020-v2/NANOAOD
@@ -10,3 +12,11 @@
 /DoubleMuon/Run2016F-02Apr2020-v1/NANOAOD
 /DoubleMuon/Run2016G-02Apr2020-v1/NANOAOD
 /DoubleMuon/Run2016H-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016B-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016B-02Apr2020-v2/NANOAOD
+/DoubleEG/Run2016C-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016D-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016E-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016F-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016G-02Apr2020-v1/NANOAOD
+/DoubleEG/Run2016H-02Apr2020-v1/NANOAOD

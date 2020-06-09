@@ -79,6 +79,7 @@ class SkimmerDiLepton(Module):
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_mass_nano",  "F")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_jetId",      "I")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_puId",       "I")
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_puIdDisc",   "F")# Starting from NanoAODv7
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_qgl",        "F")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_nConst",     "I")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF",     "F")
@@ -263,7 +264,7 @@ class SkimmerDiLepton(Module):
     # Veto electron selection
     #
     event.electronsVeto  = [x for x in event.electronsAll 
-      if x.pt > 10. and x.cutBased>=1 and abs(x.eta) < 2.4
+      if x.pt > 10. and x.cutBased>=1 and abs(x.deltaEtaSC+x.eta) < 2.5
     ]
     event.electronsVeto.sort(key=lambda x:x.pt,reverse=True)
 
@@ -510,6 +511,7 @@ class SkimmerDiLepton(Module):
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nano",-9.)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_jetId",  -9)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puId",   -9)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puIdDisc",-9.) 
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_qgl",    -9.)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_nConst", -9)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF", -9.)
@@ -552,6 +554,7 @@ class SkimmerDiLepton(Module):
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nano",jet.mass)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_jetId",   jet.jetId)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puId",    jet.puId)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puIdDisc",jet.puIdDisc)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_qgl",     jet.qgl)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_nConst",  jet.nConstituents)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF",  jet.chEmEF)
