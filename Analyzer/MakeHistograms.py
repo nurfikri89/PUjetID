@@ -18,7 +18,7 @@ varNamesToPlot = [
   "jetSel0_dilep_dphi_norm"
 ]
 
-def main(sample_name, useSkimNtuples):
+def main(sample_name, useSkimNtuples, useNewTraining=False):
 
   FileList = []
 
@@ -65,15 +65,39 @@ def main(sample_name, useSkimNtuples):
   #############################################
   if not useSkimNtuples:
     df = df.Define("passOS","lep0_charge * lep1_charge < 0.0")
-    df = df.Define("passNJetSel","(nJetSelPt30Eta5p0<=1)&&(nJetSelPt30Eta5p0<=1)")
+    df = df.Define("passNJetSel","(nJetSel>=1)&&(nJetSelPt30Eta5p0<=1)&&(nJetSelPt20Eta2p4<=1)")
     if isMC:
       for syst in ak4Systematics:
-        df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)") 
+        df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSel>=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt20Eta2p4<=1)")
 
   df = df.Define("jetSel0_dilep_dphi_norm","DeltaPhiNorm(jetSel0_dilep_dphi)")
   df = df.Define("jetSel0_dilep_ptbalance","dilep_pt/jetSel0_pt")
   if isMC:
     df = df.Define("passGenMatch","jetSel0_gen_match")
+
+  #
+  # Define pileup ID cuts
+  #
+  # Guide on how to read the pileup ID bitmap variable: 
+  # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID#miniAOD_and_nanoAOD
+  # NOTE: The pileup ID decision flag stored in NanoAOD (v7 and earlier) is based on 
+  # the 80X BDT training and working point (as in the parent MiniAOD).
+  # 
+  if not useNewTraining:
+    df = df.Define("jetSel0_puIdLoose_pass",  "(jetSel0_puId & (1 << 2))")
+    df = df.Define("jetSel0_puIdMedium_pass", "(jetSel0_puId & (1 << 1))")
+    df = df.Define("jetSel0_puIdTight_pass",  "(jetSel0_puId & (1 << 0))")
+  #
+  # Starting from NanoAODv7, the pileup ID BDT discriminant value is stored for each jet.
+  # The discriminant is calculated based on the appropriate training for each Run-2 year.
+  # i.e 80X for 2016, 94X for 2017 and 102X for 2018
+  #
+  else:
+    argStr = "jetSel0_pt,jetSel0_eta,jetSel0_puIdDisc"
+    df = df.Define("jetSel0_puIdLoose_pass",  "PUJetID_80XCut_WPLoose("+argStr+")")
+    df = df.Define("jetSel0_puIdMedium_pass", "PUJetID_80XCut_WPMedium("+argStr+")")
+    df = df.Define("jetSel0_puIdTight_pass",  "PUJetID_80XCut_WPTight("+argStr+")")
+
   #############################################
   #
   # Define Filters
@@ -115,7 +139,6 @@ def main(sample_name, useSkimNtuples):
   ptBins["pt20To30"]  = "(jetSel0_pt > 20.) && (jetSel0_pt <= 30.)"
   ptBins["pt30To40"]  = "(jetSel0_pt > 30.) && (jetSel0_pt <= 40.)"
   ptBins["pt40To50"]  = "(jetSel0_pt > 40.) && (jetSel0_pt <= 50.)"
-  ptBins["pt50To60"]  = "(jetSel0_pt > 50.) && (jetSel0_pt <= 60.)"
 
   #
   # apply jetSel0 eta and pt cuts at the same time
@@ -147,17 +170,15 @@ def main(sample_name, useSkimNtuples):
         binNames.append(cutNameStr)
 
   #
-  # Define PU Id cuts
-  # Guide on how to read the puID bitmap variable: 
-  # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID#miniAOD_and_nanoAOD
+  # Choose column used for PU Id cuts
   #
   puIDCuts = OrderedDict()
-  puIDCuts["passPUIDLoose"]  = "(jetSel0_puId & (1 << 2))"
-  puIDCuts["passPUIDMedium"] = "(jetSel0_puId & (1 << 1))"
-  puIDCuts["passPUIDTight"]  = "(jetSel0_puId & (1 << 0))"
-  puIDCuts["failPUIDLoose"]  = "!(jetSel0_puId & (1 << 2))"
-  puIDCuts["failPUIDMedium"] = "!(jetSel0_puId & (1 << 1))"
-  puIDCuts["failPUIDTight"]  = "!(jetSel0_puId & (1 << 0))"
+  puIDCuts["passPUIDLoose"]  = "jetSel0_puIdLoose_pass"
+  puIDCuts["passPUIDMedium"] = "jetSel0_puIdMedium_pass"
+  puIDCuts["passPUIDTight"]  = "jetSel0_puIdTight_pass"
+  puIDCuts["failPUIDLoose"]  = "!jetSel0_puIdLoose_pass"
+  puIDCuts["failPUIDMedium"] = "!jetSel0_puIdLoose_pass"
+  puIDCuts["failPUIDTight"]  = "!jetSel0_puIdLoose_pass"
 
   #
   # Define pt balance cuts
@@ -177,6 +198,33 @@ def main(sample_name, useSkimNtuples):
         filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
         df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
         cutNames.append(cutNameStr)
+
+  # cutNames=[]
+  # for ptBalCut in ptBalanceCuts:
+  #   for puIDCut in puIDCuts:
+  #     cutNameStr = ptBalCut + "_" + puIDCut
+  #     filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
+  #     df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
+  #     cutNames.append(cutNameStr)
+  #     #
+  #     # Gen Matching requirement
+  #     #
+  #     if isMC:
+  #       #
+  #       # Pass
+  #       #
+  #       cutNameStr = ptBalCut + "_" + puIDCut +"_passGenMatch"
+  #       filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (passGenMatch)"
+  #       df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
+  #       cutNames.append(cutNameStr)
+  #       #
+  #       # Fail
+  #       #
+  #       cutNameStr = ptBalCut + "_" + puIDCut +"_failGenMatch"
+  #       filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (!passGenMatch)"
+  #       df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
+  #       cutNames.append(cutNameStr)
+
 
   ##############################################
   #
@@ -210,7 +258,7 @@ def main(sample_name, useSkimNtuples):
       # Define full name for histogram
       #
       histoNameFinal  = "h_%s_%s" %(cutLevel,varName)
-      print histoNameFinal
+      # print histoNameFinal
       histoInfo = (histoNameFinal, histoNameFinal+";"+var.xAxis+";"+var.yAxis, var.nbins, var.xmin, var.xmax)
       Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D(histoInfo, var.varNameInTree, weightName)
       # print ("Creating histo: %s" %histoNameFinal)
@@ -250,14 +298,16 @@ if __name__== "__main__":
   parser.add_argument('--sample',         dest='sample',         type=str,  default="")
   parser.add_argument('--cores',          dest='cores',          type=int,  default=4)
   parser.add_argument('--useSkimNtuples', dest='useSkimNtuples', action='store_true')
+  parser.add_argument('--useNewTraining', dest='useNewTraining', action='store_true')
 
   args = parser.parse_args()
   print "sample = %s" %(args.sample)
   print "ncores = %d" %(args.cores)
   print "useSkimNtuples = %r" %(args.useSkimNtuples)
+  print "useNewTraining = %r" %(args.useNewTraining)
 
   ROOT.ROOT.EnableImplicitMT(args.cores)
-  main(args.sample,args.useSkimNtuples)
+  main(args.sample,args.useSkimNtuples,args.useNewTraining)
 
   time_end = datetime.datetime.now()
   elapsed = time_end - time_start
