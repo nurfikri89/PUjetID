@@ -24,7 +24,8 @@ class SkimmerDiLepton(Module):
     ak4Systematics=[
       "jesTotalUp",
       "jesTotalDown",
-      "jerUp"
+      "jerUp",
+      "jerDown"
     ]
     self.jetSystsList = [""] # Nominal
     if self.isMC:
@@ -110,11 +111,11 @@ class SkimmerDiLepton(Module):
   def getJetPtAndMassForSyst(self, jetSyst):
 
     if self.isMC:
-      jetPt   = "pt_nom"   if jetSyst == "" else "pt_"+jetSyst
-      jetMass = "mass_nom" if jetSyst == "" else "mass_"+jetSyst
+      jetPt   = "pt_nom"   if jetSyst == "" else "pt_"+jetSyst    # We use the value from nanoAOD-tools
+      jetMass = "mass_nom" if jetSyst == "" else "mass_"+jetSyst  # because we also smear the jet pt.
     else:
-      jetPt   = "pt"   #NOTE: Not necessarily true. We're not making any corrections to jets in data.
-      jetMass = "mass" #It has been applied at the NanoAOD production level.
+      jetPt   = "pt"   #NOTE: Just use the value from nanoAODs.
+      jetMass = "mass" #The JECs has been applied at the NanoAOD production level.
 
     return jetPt, jetMass
 

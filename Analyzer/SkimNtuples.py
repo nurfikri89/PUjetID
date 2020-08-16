@@ -23,8 +23,10 @@ def main(sample_name):
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
-
+  
+  print "List of files for the RDataFrame:"
   for f in FileList:
+    print f
     vec.push_back(f)
   
   # Read all files into RDataFrame
@@ -33,11 +35,12 @@ def main(sample_name):
   ak4Systematics = []
   if "MC" in sample_name:
     isMC = True
-    # ak4Systematics=[
-    #   "jesTotalUp",
-    #   "jesTotalDown",
-    #   "jerUp"
-    # ]
+    ak4Systematics=[
+      "jesTotalUp",
+      "jesTotalDown",
+      "jerUp",
+      "jerDown"
+    ]
 
   #############################################
   #
@@ -45,10 +48,10 @@ def main(sample_name):
   #
   #############################################
   df = df.Define("passOS","lep0_charge * lep1_charge < 0.0")
-  df = df.Define("passNJetSel","(nJetSelPt30Eta5p0<=1)&&(nJetSelPt30Eta5p0<=1)")
+  df = df.Define("passNJetSel","(nJetSel>=1)&&(nJetSelPt30Eta5p0<=1)&&(nJetSelPt20Eta2p4<=1)")
   if isMC:
     for syst in ak4Systematics:
-      df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)")
+      df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSel>=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt20Eta2p4<=1)")
 
   #############################################
   #

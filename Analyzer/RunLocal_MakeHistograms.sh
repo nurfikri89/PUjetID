@@ -49,7 +49,8 @@ Data18D_EGamma
 #
 for SAMPLE in ${SAMPLES[@]}
 do
-  python MakeHistograms.py  --sample $SAMPLE --cores $NCORES --useSkimNtuples
+  # python MakeHistograms.py  --sample $SAMPLE --cores $NCORES --useSkimNtuples
+  python MakeHistograms.py  --sample $SAMPLE --cores $NCORES --useSkimNtuples --useNewTraining
 done
 
 

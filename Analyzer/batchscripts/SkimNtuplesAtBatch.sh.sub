@@ -1,11 +1,10 @@
-executable            = MakeHistoAtBatch.sh
+executable            = SkimNtuplesAtBatch.sh
 universe              = vanilla
-output                = BatchLog/Histo.$(SAMPLE).$(ClusterId).$(ProcId).out
-error                 = BatchLog/Histo.$(SAMPLE).$(ClusterId).$(ProcId).err
-log                   = BatchLog/Histo.$(ClusterId).log
+output                = BatchLog/Skim.$(SAMPLE).$(ClusterId).$(ProcId).out
+error                 = BatchLog/Skim.$(SAMPLE).$(ClusterId).$(ProcId).err
+log                   = BatchLog/Skim.$(ClusterId).log
 stream_output         = True
 stream_error          = True
-
 
 
 +JobFlavour  = "longlunch"
@@ -15,6 +14,12 @@ queue SAMPLE from (
 MC16_DY_MG
 MC17_DY_MG
 MC18_DY_MG
+)
+
++JobFlavour  = "longlunch"
+request_cpus = 4
+arguments    = $(SAMPLE) 4
+queue SAMPLE from (
 MC16_DY_AMCNLO
 MC17_DY_AMCNLO
 MC18_DY_AMCNLO
@@ -49,6 +54,12 @@ Data18A_DoubleMuon
 Data18B_DoubleMuon
 Data18C_DoubleMuon
 Data18D_DoubleMuon
+)
+
++JobFlavour  = "microcentury"
+request_cpus = 4
+arguments    = $(SAMPLE) 4
+queue SAMPLE from (
 Data16B_DoubleEG
 Data16C_DoubleEG
 Data16D_DoubleEG

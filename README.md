@@ -6,8 +6,8 @@ Setup a CMSSW release:
 ```
 mkdir PileUpJetIDSF
 cd PileUpJetIDSF
-cmsrel CMSSW_10_2_18
-cd CMSSW_10_2_18/src
+cmsrel CMSSW_10_2_22
+cd CMSSW_10_2_22/src
 cmsenv
 ```
 Checkout [nanoAOD-tools](https://github.com/cms-nanoAOD/nanoAOD-tools):
@@ -34,7 +34,7 @@ scram b -j4
 All the scripts required to make the histogram templates are in the [**Analyzer**](./Analyzer) directory.
 
 >**:exclamation:IMPORTANT** You need to use ROOT version ```6.18``` or later. You can setup the environment 
-to version ```6.18.04``` by sourcing the [```sourceRecentROOT.sh```](./Analyzer/sourceRecentROOT.py) 
+to version ```6.22.00``` by sourcing the [```sourceRecentROOT.sh```](./Analyzer/sourceRecentROOT.py) 
 bash script. The bash script will also unset the CMSSW runtime environment if you had done ```cmsenv```earlier. 
 This ensures there are no conflicts between the ROOT version that you have just set up and the version in CMSSW.
 
@@ -53,5 +53,3 @@ All the scripts required to make the histogram templates are in the [**Fitter**]
 >**:exclamation:IMPORTANT** Use CMSSW's version of ROOT so you have to do ```cmsenv```. Just to be safe, do it in a clean shell.
 
 The fit is performed by using [```extract_fit.py```](./Fitter/extract_fit.py) script. Example to run the script is in [```RunFit.sh```](./Fitter/RunFit.sh). 
-
->**NOTE** The input histograms in [```input/DiMuonSkim_v2```](./Fitter/input/DiMuonSkim_v2) was produced from ```NanoAODv6```.
