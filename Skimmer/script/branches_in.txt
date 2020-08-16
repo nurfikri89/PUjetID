@@ -10,6 +10,8 @@ keep luminosityBlock
 keep event
 keep genWeight
 #
+keep fixedGridRhoFastjet*
+#
 keep Pileup_*
 keep PV_*
 #
