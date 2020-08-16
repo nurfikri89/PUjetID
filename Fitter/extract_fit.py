@@ -38,8 +38,8 @@ def MakeDPhiFit(
     outputDir, pt, eta, isData=False):
 
     print "Performing fits to extract efficiency and mistag rate" 
-    print("entries in PASS histos "+str(h_dphi_genunmatched_PASS.GetEntries())+","+str(h_dphi_genmatched_PASS.GetEntries())+","+str(h_dphi_PASS.GetEntries()))
-    print("entries in FAIL histos "+str(h_dphi_genunmatched_FAIL.GetEntries())+","+str(h_dphi_genmatched_FAIL.GetEntries())+","+str(h_dphi_FAIL.GetEntries()))
+    print("entries in PASS histos "+str(h_dphi_genunmatched_PASS.GetEntries())+","+str(h_dphi_genmatched_PASS.GetEntries())+","+str(h_dphi_PASS.GetEntries())+","+str(h_dphi_PASS_badbalance.GetEntries()))
+    print("entries in FAIL histos "+str(h_dphi_genunmatched_FAIL.GetEntries())+","+str(h_dphi_genmatched_FAIL.GetEntries())+","+str(h_dphi_FAIL.GetEntries())+","+str(h_dphi_FAIL_badbalance.GetEntries()))
     print("ptBin:"+pt) 
     print("etaBin:"+eta) 
     
@@ -256,7 +256,7 @@ def MakeDPhiFit(
     
     simultpdf.plotOn(framePASS,ROOT.RooFit.Slice(sample,"PASSsample"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData));
     simultpdf.plotOn(framePASS,ROOT.RooFit.Slice(sample,"PASSsample"),ROOT.RooFit.Components("extpdf_PU_PASS"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData),ROOT.RooFit.LineStyle(ROOT.kDashed));
-    framePASS.SetMaximum(framePASS.GetMaximum()*1.25)
+    framePASS.SetMaximum(framePASS.GetMaximum()*1.40)
     #
     # Plot the fit in FAIL,GOOD frame. 
     #
@@ -268,7 +268,7 @@ def MakeDPhiFit(
 
     simultpdf.plotOn(frameFAIL,ROOT.RooFit.Slice(sample,"FAILsample"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData));
     simultpdf.plotOn(frameFAIL,ROOT.RooFit.Slice(sample,"FAILsample"),ROOT.RooFit.Components("extpdf_PU_FAIL"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData),ROOT.RooFit.LineStyle(ROOT.kDashed))    
-    frameFAIL.SetMaximum(frameFAIL.GetMaximum()*1.25)
+    frameFAIL.SetMaximum(frameFAIL.GetMaximum()*1.40)
     #
     # Plot the fit in PASS,BAD frame. 
     #
@@ -280,7 +280,7 @@ def MakeDPhiFit(
     
     simultpdf.plotOn(framePASS_badbalance,ROOT.RooFit.Slice(sample,"PASSsample_badbalance"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData));
     simultpdf.plotOn(framePASS_badbalance,ROOT.RooFit.Slice(sample,"PASSsample_badbalance"),ROOT.RooFit.Components("extpdf_PU_PASS_badbalance"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData),ROOT.RooFit.LineStyle(ROOT.kDashed))
-    framePASS_badbalance.SetMaximum(framePASS_badbalance.GetMaximum()*1.25)
+    framePASS_badbalance.SetMaximum(framePASS_badbalance.GetMaximum()*1.40)
     #
     # Plot the fit in FAIL,BAD frame. 
     #
@@ -292,16 +292,23 @@ def MakeDPhiFit(
 
     simultpdf.plotOn(frameFAIL_badbalance,ROOT.RooFit.Slice(sample,"FAILsample_badbalance"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData));
     simultpdf.plotOn(frameFAIL_badbalance,ROOT.RooFit.Slice(sample,"FAILsample_badbalance"),ROOT.RooFit.Components("extpdf_PU_FAIL_badbalance"),ROOT.RooFit.ProjWData(ROOT.RooArgSet(sample),combData),ROOT.RooFit.LineStyle(ROOT.kDashed))
-    frameFAIL_badbalance.SetMaximum(frameFAIL_badbalance.GetMaximum()*1.25)
+    frameFAIL_badbalance.SetMaximum(frameFAIL_badbalance.GetMaximum()*1.40)
+
+    nentries_PASS = h_dphi_PASS.GetEntries()
+    nentries_FAIL = h_dphi_FAIL.GetEntries()
+    nentries_PASS_badbalance = h_dphi_PASS_badbalance.GetEntries()
+    nentries_FAIL_badbalance = h_dphi_FAIL_badbalance.GetEntries()
 
     # Add chi2 info
-    chi2_text = ROOT.TPaveText(0.15,0.72,0.15,0.88,"NBNDC")
+    chi2_text = ROOT.TPaveText(0.15,0.65,0.15,0.88,"NBNDC")
     chi2_text.SetTextAlign(11)
     chi2_text.AddText("#chi^{2} fit = %s" %round(framePASS.chiSquare(6),2))
     chi2_text.AddText("Eff "+"= {} #pm {}".format(round(effcy.getVal(),3), round(effcy.getError(),3)))
     chi2_text.AddText("Mistag "+"= {} #pm {}".format(round(mistag.getVal(),3), round(mistag.getError(),3)) )
     chi2_text.AddText("Sigma PASS "+"= {} #pm {}".format(round(gauss_sigma_PASS.getVal(),3), round(gauss_sigma_PASS.getError(),3)) )
     chi2_text.AddText("Sigma FAIL "+"= {} #pm {}".format(round(gauss_sigma_FAIL.getVal(),3), round(gauss_sigma_FAIL.getError(),3)) )
+    chi2_text.AddText("Entries PASS "+"= {}".format(nentries_PASS))
+    chi2_text.AddText("Entries FALL "+"= {}".format(nentries_FAIL))
     chi2_text.SetTextSize(0.03)
     chi2_text.SetTextColor(2)
     chi2_text.SetShadowColor(0)
@@ -310,14 +317,15 @@ def MakeDPhiFit(
     framePASS.addObject(chi2_text)
     frameFAIL.addObject(chi2_text)
 
-
-    chi2_text_badbalance = ROOT.TPaveText(0.15,0.72,0.15,0.88,"NBNDC")
+    chi2_text_badbalance = ROOT.TPaveText(0.15,0.65,0.15,0.88,"NBNDC")
     chi2_text_badbalance.SetTextAlign(11)
     chi2_text_badbalance.AddText("#chi^{2} fit = %s" %round(framePASS.chiSquare(6),2))
     chi2_text_badbalance.AddText("Eff "+"= {} #pm {}".format(round(effcy.getVal(),3), round(effcy.getError(),3)))
     chi2_text_badbalance.AddText("Mistag "+"= {} #pm {}".format(round(mistag.getVal(),3), round(mistag.getError(),3)) )
     chi2_text_badbalance.AddText("Sigma PASS "+"= {} #pm {}".format(round(gauss_sigma_PASS_badbalance.getVal(),3), round(gauss_sigma_PASS_badbalance.getError(),3)) )
     chi2_text_badbalance.AddText("Sigma FAIL "+"= {} #pm {}".format(round(gauss_sigma_FAIL_badbalance.getVal(),3), round(gauss_sigma_FAIL_badbalance.getError(),3)) )
+    chi2_text_badbalance.AddText("Entries PASS "+"= {}".format(nentries_PASS_badbalance))
+    chi2_text_badbalance.AddText("Entries FALL "+"= {}".format(nentries_FAIL_badbalance))
     chi2_text_badbalance.SetTextSize(0.03)
     chi2_text_badbalance.SetTextColor(2)
     chi2_text_badbalance.SetShadowColor(0)
@@ -325,7 +333,7 @@ def MakeDPhiFit(
     chi2_text_badbalance.SetLineColor(0)
     framePASS_badbalance.addObject(chi2_text_badbalance)
     frameFAIL_badbalance.addObject(chi2_text_badbalance)
-    
+
     #
     #
     #
@@ -425,11 +433,12 @@ def main():
 
     parser = argparse.ArgumentParser(description='Extract PU ID effcy/mistag rate and scale factors')
     #Optional arguments
-    parser.add_argument("--input",  dest="input",         help="input directory path",      type=str)
-    parser.add_argument("--output", dest="output",        help="output directory path",     type=str)
-    parser.add_argument("--year",   dest="year",          help="data year",                 type=str)
-    parser.add_argument("--wp",     dest="workingpoint",  help="Loose or Medium or Tight",  type=str)
-    parser.add_argument("--useNLO", default=False,        action='store_true')
+    parser.add_argument("--input",     dest="input",         help="input directory path",      type=str)
+    parser.add_argument("--output",    dest="output",        help="output directory path",     type=str)
+    parser.add_argument("--year",      dest="year",          help="data year",                 type=str)
+    parser.add_argument("--wp",        dest="workingpoint",  help="Loose or Medium or Tight",  type=str)
+    parser.add_argument("--useNLO",    default=False,        action='store_true')
+    parser.add_argument("--useHerwig", default=False,        action='store_true')
     args = parser.parse_args()    
     
     inputDir  = args.input
@@ -437,6 +446,7 @@ def main():
     year = args.year 
     workingpoint = args.workingpoint
     useNLO = args.useNLO
+    useHerwig = args.useHerwig
 
     # Make output directory if it does not exist
     if not os.path.exists(outputDir):
@@ -448,15 +458,18 @@ def main():
     if year == "2016":
         data_filename = inputDir+"/Histo_Data16.root"
         mc_filename   = inputDir+"/Histo_MC16_DY_MG.root"
-        if useNLO: mc_filename   = inputDir+"/Histo_MC16_DY_AMCNLO.root"
+        if useNLO:    mc_filename   = inputDir+"/Histo_MC16_DY_AMCNLO.root"
+        if useHerwig: mc_filename   = inputDir+"/Histo_MC16_DY_MG_HW.root"
     elif year == "2017":
         data_filename = inputDir+"/Histo_Data17.root"
         mc_filename   = inputDir+"/Histo_MC17_DY_MG.root"
-        if useNLO: mc_filename   = inputDir+"/Histo_MC17_DY_AMCNLO.root"
+        if useNLO:    mc_filename   = inputDir+"/Histo_MC17_DY_AMCNLO.root"
+        if useHerwig: mc_filename   = inputDir+"/Histo_MC17_DY_MG_HW.root"
     elif year == "2018":
         data_filename = inputDir+"/Histo_Data18.root"
         mc_filename   = inputDir+"/Histo_MC18_DY_MG.root"
-        if useNLO: mc_filename   = inputDir+"/Histo_MC18_DY_AMCNLO.root"
+        if useNLO:    mc_filename   = inputDir+"/Histo_MC18_DY_AMCNLO.root"
+        if useHerwig: mc_filename   = inputDir+"/Histo_MC18_DY_MG_HW.root"
   
     ROOT.gStyle.SetOptStat(0)
     ROOT.gStyle.SetMarkerSize(0.5)
@@ -477,10 +490,12 @@ def main():
     # pt Binning
     #
     _pt = [
-        "20To30",
+        "20To25",
+        "25To30",
         "30To40",
         "40To50",
     ]
+
     #
     # eta Binning
     #
