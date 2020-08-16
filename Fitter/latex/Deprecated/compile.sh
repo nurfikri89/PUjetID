@@ -13,7 +13,7 @@ echo ""
 pdflatex DumpPlots.tex 
 pdflatex DumpPlots.tex 
 
-# cp DumpPlots.pdf  ~/EOS/www/PileUpID_LO_v3.pdf
+cp DumpPlots.pdf  ~/EOS/www/PileUpID_LO_v4.pdf
 
 echo ""
 echo "Removing other files"
