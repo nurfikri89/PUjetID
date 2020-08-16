@@ -1,4 +1,4 @@
-MAX_EVENTS=-1
+MAX_EVENTS=50000
 #
 #
 python RunSkimmerLocal.py \
@@ -7,8 +7,8 @@ python RunSkimmerLocal.py \
 --outDir="./MC16_DYJetsToLL_NLO" \
 --isMC=1 \
 --dataStream="MC"
-# 
-# 
+#
+#
 python RunSkimmerLocal.py \
 --era="2016" \
 --maxEvents=${MAX_EVENTS} \
