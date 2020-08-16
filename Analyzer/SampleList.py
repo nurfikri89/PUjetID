@@ -6,7 +6,8 @@ class Sample:
     self.crabFiles = crabFiles 
     self.ntupleFiles = ntupleFiles 
 
-version="DiLeptonSkim_v4p0"
+version="DiLeptonSkim_v4p1"
+
 EOSURL="root://eoscms.cern.ch/"
 EOSDIR="/eos/cms/store/group/phys_jetmet/nbinnorj/"
 CRABDIR="JetPUId_"+version+"/CRABOUTPUT/"
@@ -49,8 +50,8 @@ Samples["MC16_DY_MG_HW"] = Sample(
 Samples["Data16B_DoubleMuon"] = Sample(
   name="Data16B_DoubleMuon",
   crabFiles=[
-    EOSDIR+CRABDIR+"DoubleMuon/JetPUId_Run2016B-Data16NanoAODv7-v1_"+version+"/*/*/tree_*.root",
-    EOSDIR+CRABDIR+"DoubleMuon/JetPUId_Run2016B-Data16NanoAODv7-v2_"+version+"/*/*/tree_*.root"
+    EOSDIR+CRABDIR+"DoubleMuon/JetPUId_Run2016B-Data16NanoAODv7_ver1-v1_"+version+"/*/*/tree_*.root",
+    EOSDIR+CRABDIR+"DoubleMuon/JetPUId_Run2016B-Data16NanoAODv7_ver2-v1_"+version+"/*/*/tree_*.root"
   ],
   ntupleFiles=[
     EOSDIR+NTUPDIR+"ntuple_Data16B_DoubleMuon.root"
@@ -113,8 +114,8 @@ Samples["Data16H_DoubleMuon"] = Sample(
 Samples["Data16B_DoubleEG"] = Sample(
   name="Data16B_DoubleEG",
   crabFiles=[
-    EOSDIR+CRABDIR+"DoubleEG/JetPUId_Run2016B-Data16NanoAODv7-v1_"+version+"/*/*/tree_*.root",
-    EOSDIR+CRABDIR+"DoubleEG/JetPUId_Run2016B-Data16NanoAODv7-v2_"+version+"/*/*/tree_*.root"
+    EOSDIR+CRABDIR+"DoubleEG/JetPUId_Run2016B-Data16NanoAODv7_ver1-v1_"+version+"/*/*/tree_*.root",
+    EOSDIR+CRABDIR+"DoubleEG/JetPUId_Run2016B-Data16NanoAODv7_ver2-v1_"+version+"/*/*/tree_*.root"
   ],
   ntupleFiles=[
     EOSDIR+NTUPDIR+"ntuple_Data16B_DoubleEG.root"

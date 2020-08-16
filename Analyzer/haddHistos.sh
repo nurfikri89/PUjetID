@@ -1,6 +1,7 @@
 #
 # combine all data histos into one root file
 #
-hadd -f histos/Histo_Data16.root histos/Histo_Data16*.root
-hadd -f histos/Histo_Data17.root histos/Histo_Data17*.root
-hadd -f histos/Histo_Data18.root histos/Histo_Data18*.root
+HISTODIR="histos"
+hadd -f ${HISTODIR}/Histo_Data16.root ${HISTODIR}/Histo_Data16*.root
+hadd -f ${HISTODIR}/Histo_Data17.root ${HISTODIR}/Histo_Data17*.root
+hadd -f ${HISTODIR}/Histo_Data18.root ${HISTODIR}/Histo_Data18*.root

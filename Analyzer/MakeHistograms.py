@@ -136,7 +136,8 @@ def main(sample_name, useSkimNtuples, useNewTraining=False):
   # Define jetSel0 pt bins
   #
   ptBins = OrderedDict()
-  ptBins["pt20To30"]  = "(jetSel0_pt > 20.) && (jetSel0_pt <= 30.)"
+  ptBins["pt20To25"]  = "(jetSel0_pt > 20.) && (jetSel0_pt <= 25.)"
+  ptBins["pt25To30"]  = "(jetSel0_pt > 25.) && (jetSel0_pt <= 30.)"
   ptBins["pt30To40"]  = "(jetSel0_pt > 30.) && (jetSel0_pt <= 40.)"
   ptBins["pt40To50"]  = "(jetSel0_pt > 40.) && (jetSel0_pt <= 50.)"
 
