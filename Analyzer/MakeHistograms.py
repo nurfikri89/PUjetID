@@ -14,11 +14,12 @@ ROOT.gROOT.LoadMacro("./Helpers.h")
 
 #
 #
+#
 varNamesToPlot = [
-  "jetSel0_dilep_dphi_norm"
+  "probeJet_dilep_dphi_norm"
 ]
 
-def main(sample_name, useSkimNtuples, useNewTraining=False):
+def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
 
   FileList = []
 
@@ -45,9 +46,14 @@ def main(sample_name, useSkimNtuples, useNewTraining=False):
   if "MC" in sample_name:
     isMC = True
 
+  systStrPre  = ""
+  systStrPost = ""
+  if systStr != "": 
+    systStrPre  = systStr+"_"
+    systStrPost = "_"+systStr
   #############################################
   #
-  # Set columns in RDataFrame
+  # Define columns in RDataframe
   #
   #############################################
   # Define evtWeight variable
@@ -55,26 +61,42 @@ def main(sample_name, useSkimNtuples, useNewTraining=False):
     df = df.Define("evtWeight","1.0")
   else: #For MC
     df = df.Define("evtWeight","genWeight")
+
   # Define name for event weight
   weightName = "evtWeight"
 
-  #############################################
-  #
-  # Define columns
-  #
-  #############################################
   if not useSkimNtuples:
     df = df.Define("passOS","lep0_charge * lep1_charge < 0.0")
-    df = df.Define("passNJetSel","(nJetSel>=1)&&(nJetSelPt30Eta5p0<=1)&&(nJetSelPt20Eta2p4<=1)")
-    if isMC:
-      for syst in ak4Systematics:
-        df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSel>=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt20Eta2p4<=1)")
+    if systStr != "":
+      df = df.Define("passNJetSel","(nJetSel>=1)&&(nJetSelPt30Eta5p0<=1)&&(nJetSelPt20Eta2p4<=1)")
+    else:
+      df = df.Define(systStr+"passNJetSel","("+systStrPre+"nJetSel>=1)&&("+systStrPre+"nJetSelPt30Eta5p0<=1)&&("+systStrPre+"nJetSelPt20Eta2p4<=1)")
 
-  df = df.Define("jetSel0_dilep_dphi_norm","DeltaPhiNorm(jetSel0_dilep_dphi)")
-  df = df.Define("jetSel0_dilep_ptbalance","dilep_pt/jetSel0_pt")
+  #
+  # Define flags for lepton channels if need to check by channel
+  #
+  df = df.Define("isElEl","(abs(lep0_pdgId)==11)&&(abs(lep1_pdgId)==11)")
+  df = df.Define("isMuMu","(abs(lep0_pdgId)==13)&&(abs(lep1_pdgId)==13)")
+  #
+  # Define the probeJet
+  #
+  probeJetStr=systStrPre+"jetSel0"
+  df = df.Define("probeJet_pt",             probeJetStr+"_pt")
+  df = df.Define("probeJet_eta",            probeJetStr+"_eta")
+  df = df.Define("probeJet_abseta",         "fabs("+probeJetStr+"_eta)")
+  df = df.Define("probeJet_phi",            probeJetStr+"_phi")
+  df = df.Define("probeJet_puIdDisc",       probeJetStr+"_puIdDisc")
+  df = df.Define("probeJet_puIdFlag_Loose", probeJetStr+"_puId & (1 << 2)")
+  df = df.Define("probeJet_puIdFlag_Medium",probeJetStr+"_puId & (1 << 1)")
+  df = df.Define("probeJet_puIdFlag_Tight", probeJetStr+"_puId & (1 << 0)")
+  df = df.Define("probeJet_dilep_dphi",     probeJetStr+"_dilep_dphi")
   if isMC:
-    df = df.Define("passGenMatch","jetSel0_gen_match")
-
+    df = df.Define("probeJet_passGenMatch",probeJetStr+"_gen_match")
+  #
+  #
+  #
+  df = df.Define("probeJet_dilep_dphi_norm","DeltaPhiNorm(probeJet_dilep_dphi)")
+  df = df.Define("probeJet_dilep_ptbalance","dilep_pt/probeJet_pt")
   #
   # Define pileup ID cuts
   #
@@ -84,73 +106,55 @@ def main(sample_name, useSkimNtuples, useNewTraining=False):
   # the 80X BDT training and working point (as in the parent MiniAOD).
   # 
   if not useNewTraining:
-    df = df.Define("jetSel0_puIdLoose_pass",  "(jetSel0_puId & (1 << 2))")
-    df = df.Define("jetSel0_puIdMedium_pass", "(jetSel0_puId & (1 << 1))")
-    df = df.Define("jetSel0_puIdTight_pass",  "(jetSel0_puId & (1 << 0))")
+    df = df.Define("probeJet_puIdLoose_pass",  "probeJet_puIdFlag_Loose")
+    df = df.Define("probeJet_puIdMedium_pass", "probeJet_puIdFlag_Medium")
+    df = df.Define("probeJet_puIdTight_pass",  "probeJet_puIdFlag_Tight")
   #
   # Starting from NanoAODv7, the pileup ID BDT discriminant value is stored for each jet.
   # The discriminant is calculated based on the appropriate training for each Run-2 year.
   # i.e 80X for 2016, 94X for 2017 and 102X for 2018
   #
   else:
-    argStr = "jetSel0_pt,jetSel0_eta,jetSel0_puIdDisc"
-    df = df.Define("jetSel0_puIdLoose_pass",  "PUJetID_80XCut_WPLoose("+argStr+")")
-    df = df.Define("jetSel0_puIdMedium_pass", "PUJetID_80XCut_WPMedium("+argStr+")")
-    df = df.Define("jetSel0_puIdTight_pass",  "PUJetID_80XCut_WPTight("+argStr+")")
-
+    argStr = "probeJet_pt,probeJet_eta,probeJet_puIdDisc"
+    df = df.Define("probeJet_puIdLoose_pass",  "PUJetID_80XCut_WPLoose("+argStr+")")
+    df = df.Define("probeJet_puIdMedium_pass", "PUJetID_80XCut_WPMedium("+argStr+")")
+    df = df.Define("probeJet_puIdTight_pass",  "PUJetID_80XCut_WPTight("+argStr+")")
+  #
+  #
+  #
+  df = df.Define("probeJet_ptbalance_good","(probeJet_dilep_ptbalance>=0.5) && (probeJet_dilep_ptbalance<1.5)")
+  df = df.Define("probeJet_ptbalance_bad","probeJet_dilep_ptbalance<0.5")
   #############################################
   #
   # Define Filters
   #
   #############################################
   df_filters  = OrderedDict()
-  df_filters["passOS"] = df.Filter("passOS")
-  df_filters["passNJetSel"] = df_filters["passOS"].Filter("passNJetSel")
+  df_filters["passNJetSel"] = df.Filter("passOS").Filter(systStrPre+"passNJetSel")
   #
-  # Define jetSel0 eta bins
+  # Choose column used for PU Id cuts
   #
-  etaBins = OrderedDict()
-  # Abs(eta)
-  etaBins["abseta0p0To1p479"] = "(fabs(jetSel0_eta) > 0.0)   && (fabs(jetSel0_eta) <= 1.479)"
-  etaBins["abseta1p479To2p0"] = "(fabs(jetSel0_eta) > 1.479) && (fabs(jetSel0_eta) <= 2.0)"
-  etaBins["abseta2p0To2p5"]   = "(fabs(jetSel0_eta) > 2.0)   && (fabs(jetSel0_eta) <= 2.5)"
-  etaBins["abseta2p5To2p75"]  = "(fabs(jetSel0_eta) > 2.5)   && (fabs(jetSel0_eta) <= 2.75)"
-  etaBins["abseta2p75To3p0"]  = "(fabs(jetSel0_eta) > 2.75)  && (fabs(jetSel0_eta) <= 3.00)"
-  etaBins["abseta3p0To5p0"]   = "(fabs(jetSel0_eta) > 3.0)   && (fabs(jetSel0_eta) <= 5.0)"
-  # positive eta
-  etaBins["eta0p0Topos1p479"]    = "(jetSel0_eta > 0.0)    && (jetSel0_eta <= 1.479)"
-  etaBins["etapos1p479Topos2p0"] = "(jetSel0_eta > 1.479)  && (jetSel0_eta <= 2.0)"
-  etaBins["etapos2p0Topos2p5"]   = "(jetSel0_eta > 2.0)    && (jetSel0_eta <= 2.5)"
-  etaBins["etapos2p5Topos2p75"]  = "(jetSel0_eta > 2.5)    && (jetSel0_eta <= 2.75)"
-  etaBins["etapos2p75Topos3p0"]  = "(jetSel0_eta > 2.75)   && (jetSel0_eta <= 3.00)"
-  etaBins["etapos3p0Topos5p0"]   = "(jetSel0_eta > 3.0)    && (jetSel0_eta <= 5.0)"
-  # negative eta
-  etaBins["etaneg1p479To0p0"]    = "(jetSel0_eta < 0.0)    && (jetSel0_eta >= -1.479)"
-  etaBins["etaneg2p0Toneg1p479"] = "(jetSel0_eta < -1.479) && (jetSel0_eta >= -2.0)"
-  etaBins["etaneg2p5Toneg2p0"]   = "(jetSel0_eta < -2.0)   && (jetSel0_eta >= -2.5)"
-  etaBins["etaneg2p75Toneg2p5"]  = "(jetSel0_eta < -2.5)   && (jetSel0_eta >= -2.75)"
-  etaBins["etaneg3p0Toneg2p75"]  = "(jetSel0_eta < -2.75)  && (jetSel0_eta >= -3.00)"
-  etaBins["etaneg5p0Toneg3p0"]   = "(jetSel0_eta < -3.0)   && (jetSel0_eta >= -5.0)"
+  puIDCuts = OrderedDict()
+  puIDCuts["passPUIDLoose"]  = "probeJet_puIdLoose_pass"
+  puIDCuts["passPUIDMedium"] = "probeJet_puIdMedium_pass"
+  puIDCuts["passPUIDTight"]  = "probeJet_puIdTight_pass"
+  puIDCuts["failPUIDLoose"]  = "!probeJet_puIdLoose_pass"
+  puIDCuts["failPUIDMedium"] = "!probeJet_puIdMedium_pass"
+  puIDCuts["failPUIDTight"]  = "!probeJet_puIdTight_pass"
+  #
+  # Define pt balance cuts
+  #
+  ptBalanceCuts = OrderedDict()
+  ptBalanceCuts["goodBal"] = "probeJet_ptbalance_good"
+  ptBalanceCuts["badBal"]  = "probeJet_ptbalance_bad"
 
-  #
-  # Define jetSel0 pt bins
-  #
-  ptBins = OrderedDict()
-  ptBins["pt20To25"]  = "(jetSel0_pt > 20.) && (jetSel0_pt <= 25.)"
-  ptBins["pt25To30"]  = "(jetSel0_pt > 25.) && (jetSel0_pt <= 30.)"
-  ptBins["pt30To40"]  = "(jetSel0_pt > 30.) && (jetSel0_pt <= 40.)"
-  ptBins["pt40To50"]  = "(jetSel0_pt > 40.) && (jetSel0_pt <= 50.)"
-
-  #
-  # apply jetSel0 eta and pt cuts at the same time
-  #
-  binNames = []
-  for eta in etaBins:
-    for pt in ptBins:
-      cutNameStr = "passNJetSel_jetSel0_"+ eta + "_" + pt
-      filterStr  = etaBins[eta] + " && " + ptBins[pt]
-      df_filters[cutNameStr] =  df_filters["passNJetSel"].Filter(filterStr)
-      binNames.append(cutNameStr)
+  selNames = []
+  for ptBalCut in ptBalanceCuts:
+    for puIDCut in puIDCuts:
+      selName = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut
+      filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
+      df_filters[selName] = df_filters["passNJetSel"].Filter(filterStr)
+      selNames.append(selName)
       #
       # Gen Matching requirement
       #
@@ -158,74 +162,86 @@ def main(sample_name, useSkimNtuples, useNewTraining=False):
         #
         # Pass
         #
-        cutNameStr = "passNJetSel_jetSel0_"+ eta + "_" + pt +"_passGenMatch"
-        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (passGenMatch)"
-        df_filters[cutNameStr] =  df_filters["passNJetSel"].Filter(filterStr)
-        binNames.append(cutNameStr)
+        selName = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut + "_passGenMatch"
+        filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (probeJet_passGenMatch)"
+        df_filters[selName] = df_filters["passNJetSel"].Filter(filterStr)
+        selNames.append(selName)
         #
         # Fail
         #
-        cutNameStr = "passNJetSel_jetSel0_"+ eta + "_" + pt +"_failGenMatch"
-        filterStr  = etaBins[eta] + " && " + ptBins[pt] + " && (!passGenMatch)"
-        df_filters[cutNameStr] =  df_filters["passNJetSel"].Filter(filterStr)
-        binNames.append(cutNameStr)
+        selName = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut + "_failGenMatch"
+        filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (!probeJet_passGenMatch)"
+        df_filters[selName] = df_filters["passNJetSel"].Filter(filterStr)
+        selNames.append(selName)
 
   #
-  # Choose column used for PU Id cuts
+  # Define probeJet eta bins
   #
-  puIDCuts = OrderedDict()
-  puIDCuts["passPUIDLoose"]  = "jetSel0_puIdLoose_pass"
-  puIDCuts["passPUIDMedium"] = "jetSel0_puIdMedium_pass"
-  puIDCuts["passPUIDTight"]  = "jetSel0_puIdTight_pass"
-  puIDCuts["failPUIDLoose"]  = "!jetSel0_puIdLoose_pass"
-  puIDCuts["failPUIDMedium"] = "!jetSel0_puIdLoose_pass"
-  puIDCuts["failPUIDTight"]  = "!jetSel0_puIdLoose_pass"
+  # etaBins = OrderedDict()
+  # # Abs(eta)
+  # # etaBins["abseta0p0To1p479"] = "(probeJet_abseta > 0.0)   && (probeJet_abseta <= 1.479)"
+  # # etaBins["abseta1p479To2p0"] = "(probeJet_abseta > 1.479) && (probeJet_abseta <= 2.0)"
+  # # etaBins["abseta2p0To2p5"]   = "(probeJet_abseta > 2.0)   && (probeJet_abseta <= 2.5)"
+  # # etaBins["abseta2p5To2p75"]  = "(probeJet_abseta > 2.5)   && (probeJet_abseta <= 2.75)"
+  # # etaBins["abseta2p75To3p0"]  = "(probeJet_abseta > 2.75)  && (probeJet_abseta <= 3.00)"
+  # # etaBins["abseta3p0To5p0"]   = "(probeJet_abseta > 3.0)   && (probeJet_abseta <= 5.0)"
+  # # negative eta
+  # etaBins["etaneg5p0Toneg3p0"]   = "(probeJet_eta < -3.0)   && (probeJet_eta >= -5.0)"
+  # etaBins["etaneg3p0Toneg2p75"]  = "(probeJet_eta < -2.75)  && (probeJet_eta >= -3.00)"
+  # etaBins["etaneg2p75Toneg2p5"]  = "(probeJet_eta < -2.5)   && (probeJet_eta >= -2.75)"
+  # etaBins["etaneg2p5Toneg2p0"]   = "(probeJet_eta < -2.0)   && (probeJet_eta >= -2.5)"
+  # etaBins["etaneg2p0Toneg1p479"] = "(probeJet_eta < -1.479) && (probeJet_eta >= -2.0)"
+  # etaBins["etaneg1p479To0p0"]    = "(probeJet_eta < 0.0)    && (probeJet_eta >= -1.479)"
+  # # positive eta
+  # etaBins["eta0p0Topos1p479"]    = "(probeJet_eta > 0.0)    && (probeJet_eta <= 1.479)"
+  # etaBins["etapos1p479Topos2p0"] = "(probeJet_eta > 1.479)  && (probeJet_eta <= 2.0)"
+  # etaBins["etapos2p0Topos2p5"]   = "(probeJet_eta > 2.0)    && (probeJet_eta <= 2.5)"
+  # etaBins["etapos2p5Topos2p75"]  = "(probeJet_eta > 2.5)    && (probeJet_eta <= 2.75)"
+  # etaBins["etapos2p75Topos3p0"]  = "(probeJet_eta > 2.75)   && (probeJet_eta <= 3.00)"
+  # etaBins["etapos3p0Topos5p0"]   = "(probeJet_eta > 3.0)    && (probeJet_eta <= 5.0)"
+  # #
+  # # Define probeJet pt bins
+  # #
+  # ptBins = OrderedDict()
+  # ptBins["pt20To25"]  = "(probeJet_pt > 20.) && (probeJet_pt <= 25.)"
+  # ptBins["pt25To30"]  = "(probeJet_pt > 25.) && (probeJet_pt <= 30.)"
+  # ptBins["pt30To40"]  = "(probeJet_pt > 30.) && (probeJet_pt <= 40.)"
+  # ptBins["pt40To50"]  = "(probeJet_pt > 40.) && (probeJet_pt <= 50.)"
+
+  etaBins = OrderedDict()
+  # negative eta
+  etaBins["etaneg5p0Toneg3p0"]   = "(probeJet_eta >= -5.000)  &&  (probeJet_eta < -3.000)"
+  etaBins["etaneg3p0Toneg2p75"]  = "(probeJet_eta >= -3.000)  &&  (probeJet_eta < -2.750)"
+  etaBins["etaneg2p75Toneg2p5"]  = "(probeJet_eta >= -2.750)  &&  (probeJet_eta < -2.500)"
+  etaBins["etaneg2p5Toneg2p0"]   = "(probeJet_eta >= -2.500)  &&  (probeJet_eta < -2.000)"
+  etaBins["etaneg2p0Toneg1p479"] = "(probeJet_eta >= -2.000)  &&  (probeJet_eta < -1.479)"
+  etaBins["etaneg1p479To0p0"]    = "(probeJet_eta >= -1.479)  &&  (probeJet_eta <  0.000)"
+  # positive eta
+  etaBins["eta0p0Topos1p479"]    = "(probeJet_eta >= 0.000)  && (probeJet_eta < 1.479)"
+  etaBins["etapos1p479Topos2p0"] = "(probeJet_eta >= 1.479)  && (probeJet_eta < 2.000)"
+  etaBins["etapos2p0Topos2p5"]   = "(probeJet_eta >= 2.000)  && (probeJet_eta < 2.500)"
+  etaBins["etapos2p5Topos2p75"]  = "(probeJet_eta >= 2.500)  && (probeJet_eta < 2.750)"
+  etaBins["etapos2p75Topos3p0"]  = "(probeJet_eta >= 2.750)  && (probeJet_eta < 3.000)"
+  etaBins["etapos3p0Topos5p0"]   = "(probeJet_eta >= 3.000)  && (probeJet_eta < 5.000)"
+  # Define probeJet pt bins
+  ptBins = OrderedDict()
+  ptBins["pt20To25"]  = "(probeJet_pt >= 20.) && (probeJet_pt < 25.)"
+  ptBins["pt25To30"]  = "(probeJet_pt >= 25.) && (probeJet_pt < 30.)"
+  ptBins["pt30To40"]  = "(probeJet_pt >= 30.) && (probeJet_pt < 40.)"
+  ptBins["pt40To50"]  = "(probeJet_pt >= 40.) && (probeJet_pt < 50.)"
+
 
   #
-  # Define pt balance cuts
+  # apply probeJet eta and pt cuts at the same time
   #
-  ptBalanceCuts = OrderedDict()
-  ptBalanceCuts["badBal"]  = "jetSel0_dilep_ptbalance<0.5"
-  ptBalanceCuts["goodBal"] = "(jetSel0_dilep_ptbalance>=0.5) && (jetSel0_dilep_ptbalance<1.5)"
-
-  cutNames=[]
-  for binName in binNames:
-    #
-    # apply ptBalance and puID at the same time
-    #
-    for ptBalCut in ptBalanceCuts:
-      for puIDCut in puIDCuts:
-        cutNameStr = binName + "_" + ptBalCut + "_" + puIDCut
-        filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
-        df_filters[cutNameStr] = df_filters[binName].Filter(filterStr)
+  cutNames = []
+  for selName in selNames:
+    for eta in etaBins:
+      for pt in ptBins:
+        cutNameStr = selName + "_"+ eta + "_" + pt
+        filterStr  = etaBins[eta] + " && " + ptBins[pt]
+        df_filters[cutNameStr] =  df_filters[selName].Filter(filterStr)
         cutNames.append(cutNameStr)
-
-  # cutNames=[]
-  # for ptBalCut in ptBalanceCuts:
-  #   for puIDCut in puIDCuts:
-  #     cutNameStr = ptBalCut + "_" + puIDCut
-  #     filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
-  #     df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
-  #     cutNames.append(cutNameStr)
-  #     #
-  #     # Gen Matching requirement
-  #     #
-  #     if isMC:
-  #       #
-  #       # Pass
-  #       #
-  #       cutNameStr = ptBalCut + "_" + puIDCut +"_passGenMatch"
-  #       filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (passGenMatch)"
-  #       df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
-  #       cutNames.append(cutNameStr)
-  #       #
-  #       # Fail
-  #       #
-  #       cutNameStr = ptBalCut + "_" + puIDCut +"_failGenMatch"
-  #       filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (!passGenMatch)"
-  #       df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
-  #       cutNames.append(cutNameStr)
-
 
   ##############################################
   #
@@ -254,20 +270,17 @@ def main(sample_name, useSkimNtuples, useNewTraining=False):
       #
       # Some exceptions 
       #
-      if "jetSel0" in varName and "passNJetSel" not in cutLevel: continue
+      if "probeJet" in varName and "passNJetSel" not in cutLevel: continue
       #
       # Define full name for histogram
       #
-      histoNameFinal  = "h_%s_%s" %(cutLevel,varName)
-      # print histoNameFinal
+      histoNameFinal  = "h_%s_%s%s" %(cutLevel,varName,systStrPost)
       histoInfo = (histoNameFinal, histoNameFinal+";"+var.xAxis+";"+var.yAxis, var.nbins, var.xmin, var.xmax)
       Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D(histoInfo, var.varNameInTree, weightName)
-      # print ("Creating histo: %s" %histoNameFinal)
 
-  print("Number of histos: %s " %len(Histograms))
+  print("Number of 1D histos: %s " %len(Histograms))
   numOfEvents = df.Count()
   print("Number of events in sample: %s " %numOfEvents.GetValue())
-
   ##############################################
   #
   # Save histograms in output rootfile
@@ -307,10 +320,38 @@ if __name__== "__main__":
   print "useSkimNtuples = %r" %(args.useSkimNtuples)
   print "useNewTraining = %r" %(args.useNewTraining)
 
+  isMC = False
+  if "MC" in args.sample:
+    isMC = True
+  
+  #
+  # List all jet energy scale and resolution systematics
+  #
+  ak4Systematics=[]
+  if isMC:
+    ak4Systematics=[
+      # "jesTotalUp",
+      # "jesTotalDown",
+      # "jerUp",
+      # "jerDown"
+    ]
+  # Don't do ak4Systematics for MG+HW and AMCNLO
+  if "MG_HW" in args.sample: ak4Systematics=[]
+  if "AMCNLO" in args.sample: ak4Systematics=[]
+  
   ROOT.ROOT.EnableImplicitMT(args.cores)
-  main(args.sample,args.useSkimNtuples,args.useNewTraining)
+  #
+  # Do Nominal
+  #
+  main(args.sample,args.useSkimNtuples,"",args.useNewTraining)
+  #
+  # Do Systematics
+  #
+  for systStr in ak4Systematics:
+    main(args.sample,args.useSkimNtuples,systStr,args.useNewTraining)
 
   time_end = datetime.datetime.now()
   elapsed = time_end - time_start
   elapsed_str = str(datetime.timedelta(seconds=elapsed.seconds))
   print("MakeHistograms.py::DONE::Sample("+args.sample+")::Time("+str(time_end)+")::Elapsed("+elapsed_str+")")
+
