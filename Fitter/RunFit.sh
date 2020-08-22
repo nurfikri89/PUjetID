@@ -1,13 +1,11 @@
 #
 # Directory path containing all the histogram rootfiles
 #
-INDIR="./input/DiLeptonSkim_v4p1/"
-
+INDIR="../Analyzer/histos/"
 #
 # Directory path for the output of the fits
 #
-OUTDIR="./results_v4p1/"
-
+OUTDIR="./results_vp41/"
 
 function RunFitter {
   python extract_fit.py --input ${1} --output ${2}/${3}_WPLoose/  --year ${3} --wp Loose
@@ -24,7 +22,6 @@ RunFitter ${INDIR} ${OUTDIR} ${YEAR}
 YEAR="2018"
 RunFitter ${INDIR} ${OUTDIR} ${YEAR}
 
-
 function RunFitterNLO {
   python extract_fit.py --useNLO --input ${1} --output ${2}/${3}_WPLoose/  --year ${3} --wp Loose
   python extract_fit.py --useNLO --input ${1} --output ${2}/${3}_WPMedium/ --year ${3} --wp Medium
@@ -39,7 +36,6 @@ function RunFitterNLO {
 
 # YEAR="2018"
 # RunFitterNLO ${INDIR} ${OUTDIR} ${YEAR}
-
 
 function RunFitterHerwig {
   python extract_fit.py --useHerwig --input ${1} --output ${2}/${3}_WPLoose/  --year ${3} --wp Loose
