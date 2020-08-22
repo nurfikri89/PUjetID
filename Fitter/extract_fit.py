@@ -35,7 +35,7 @@ def MakeDPhiFit(
     h_dphi_PASS,h_dphi_FAIL, 
     h_dphi_genunmatched_PASS_badbalance,h_dphi_genmatched_PASS_badbalance,h_dphi_genunmatched_FAIL_badbalance,h_dphi_genmatched_FAIL_badbalance,
     h_dphi_PASS_badbalance,h_dphi_FAIL_badbalance, 
-    outputDir, pt, eta, isData=False):
+    outputDir, pt, eta, isData=False, doEtaBins=False):
 
     print "Performing fits to extract efficiency and mistag rate" 
     print("entries in PASS histos "+str(h_dphi_genunmatched_PASS.GetEntries())+","+str(h_dphi_genmatched_PASS.GetEntries())+","+str(h_dphi_PASS.GetEntries())+","+str(h_dphi_PASS_badbalance.GetEntries()))
@@ -347,10 +347,17 @@ def MakeDPhiFit(
     latex2.SetTextFont(42)
     latex2.SetTextAlign(31) # align right                                                     
 
-    if isData:        
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+    if doEtaBins:
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < #eta_{jet} < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < #eta_{jet} < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", MC")
     else:
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
+
     latex2.Draw("same")
     framePASS.Print()
  
@@ -365,10 +372,16 @@ def MakeDPhiFit(
     cfitFAIL = ROOT.TCanvas("cfitFAIL","cfitFAIL",600,600)
     cfitFAIL.SetLogx(False)
     frameFAIL.Draw()
-    if isData:        
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+    if doEtaBins:
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < #eta_{jet} < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < #eta_{jet} < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", MC")
     else:
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
     latex2.Draw("same")
     frameFAIL.Print()
 
@@ -380,11 +393,16 @@ def MakeDPhiFit(
     cfitPASS_badbalance = ROOT.TCanvas("cfitPASS_badbalance","cfitPASS_badbalance",600,600)
     cfitPASS_badbalance.SetLogx(False)
     framePASS_badbalance.Draw()
-    if isData:        
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+    if doEtaBins:
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", MC")
     else:
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
-
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
     latex2.Draw("same")
     framePASS_badbalance.Print()
     legend.Draw("same")
@@ -395,10 +413,16 @@ def MakeDPhiFit(
     cfitFAIL_badbalance = ROOT.TCanvas("cfitFAIL_badbalance","cfitFAIL_badbalance",600,600)
     cfitFAIL_badbalance.SetLogx(False)
     frameFAIL_badbalance.Draw()
-    if isData:        
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+    if doEtaBins:
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < #eta_{jet} < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("neg","-").replace("pos","+").replace("p",".")+" < #eta_{jet} < "+eta.split("To")[1].replace("neg","-").replace("pos","+").replace("p",".")+ ", MC")
     else:
-        latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
+        if isData:        
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", Data")
+        else:
+            latex2.DrawLatex(0.89, 0.915,pt.split("To")[0]+" GeV < pT_{jet} < "+pt.split("To")[1]+" GeV, "+eta.split("To")[0].replace("p",".")+" < |#eta_{jet}| < "+eta.split("To")[1].replace("p",".")+ ", MC")
 
     latex2.Draw("same")
     frameFAIL_badbalance.Print()
@@ -499,7 +523,7 @@ def main():
     #
     # eta Binning
     #
-    doEtaBins=False
+    doEtaBins=True
     _eta = []
     if doEtaBins:
         _eta = [
@@ -582,34 +606,36 @@ def main():
                 etaBinStr = "_eta"+_eta[j]
             else :
                 etaBinStr = "_abseta"+_eta[j]
+
+            binStr = etaBinStr+ptBinStr
             #
             # Retrieve histograms: PASS ID, GOOD balance
             #
-            h_dphi_mc_genunmatched_PASS = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_failGenMatch_goodBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_genmatched_PASS   = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_passGenMatch_goodBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_PASS              = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_goodBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_data_PASS            = f_data.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_goodBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
+            h_dphi_mc_genunmatched_PASS = f_mc.Get("h_passNJetSel_probeJet_goodBal_passPUID"+workingpoint+"_failGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_genmatched_PASS   = f_mc.Get("h_passNJetSel_probeJet_goodBal_passPUID"+workingpoint+"_passGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_PASS              = f_mc.Get("h_passNJetSel_probeJet_goodBal_passPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_data_PASS            = f_data.Get("h_passNJetSel_probeJet_goodBal_passPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
             #
             # Retrieve histograms: FAIL ID, GOOD balance
             #
-            h_dphi_mc_genunmatched_FAIL = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_failGenMatch_goodBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_genmatched_FAIL   = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_passGenMatch_goodBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_FAIL              = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_goodBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_data_FAIL            = f_data.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_goodBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
+            h_dphi_mc_genunmatched_FAIL = f_mc.Get("h_passNJetSel_probeJet_goodBal_failPUID"+workingpoint+"_failGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_genmatched_FAIL   = f_mc.Get("h_passNJetSel_probeJet_goodBal_failPUID"+workingpoint+"_passGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_FAIL              = f_mc.Get("h_passNJetSel_probeJet_goodBal_failPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_data_FAIL            = f_data.Get("h_passNJetSel_probeJet_goodBal_failPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
             #
             # Retrieve histograms: PASS ID, BAD balance
             #
-            h_dphi_mc_genunmatched_PASS_badbalance = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_failGenMatch_badBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_genmatched_PASS_badbalance   = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_passGenMatch_badBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_PASS_badbalance              = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_badBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_data_PASS_badbalance            = f_data.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_badBal_passPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
+            h_dphi_mc_genunmatched_PASS_badbalance =  f_mc.Get("h_passNJetSel_probeJet_badBal_passPUID"+workingpoint+"_failGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_genmatched_PASS_badbalance   =  f_mc.Get("h_passNJetSel_probeJet_badBal_passPUID"+workingpoint+"_passGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_PASS_badbalance              =  f_mc.Get("h_passNJetSel_probeJet_badBal_passPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_data_PASS_badbalance            =  f_data.Get("h_passNJetSel_probeJet_badBal_passPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
             #
             # Retrieve histograms: FAIL ID, BAD balance
             #
-            h_dphi_mc_genunmatched_FAIL_badbalance = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_failGenMatch_badBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_genmatched_FAIL_badbalance   = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_passGenMatch_badBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_mc_FAIL_badbalance              = f_mc.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_badBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
-            h_dphi_data_FAIL_badbalance            = f_data.Get("h_passNJetSel_jetSel0"+etaBinStr+ptBinStr+"_badBal_failPUID"+workingpoint+"_jetSel0_dilep_dphi_norm")
+            h_dphi_mc_genunmatched_FAIL_badbalance = f_mc.Get("h_passNJetSel_probeJet_badBal_failPUID"+workingpoint+"_failGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_genmatched_FAIL_badbalance   = f_mc.Get("h_passNJetSel_probeJet_badBal_failPUID"+workingpoint+"_passGenMatch"+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_mc_FAIL_badbalance              = f_mc.Get("h_passNJetSel_probeJet_badBal_failPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
+            h_dphi_data_FAIL_badbalance            = f_data.Get("h_passNJetSel_probeJet_badBal_failPUID"+workingpoint+binStr+"_probeJet_dilep_dphi_norm")
             #
             # Perform fit on MC
             #
@@ -618,7 +644,7 @@ def main():
                 h_dphi_mc_PASS,h_dphi_mc_FAIL, 
                 h_dphi_mc_genunmatched_PASS_badbalance, h_dphi_mc_genmatched_PASS_badbalance, h_dphi_mc_genunmatched_FAIL_badbalance, h_dphi_mc_genmatched_FAIL_badbalance, 
                 h_dphi_mc_PASS_badbalance, h_dphi_mc_FAIL_badbalance, 
-                outputDir,_pt[i], _eta[j],
+                outputDir,_pt[i], _eta[j], isData=False, doEtaBins=doEtaBins
             )
             heffmc.SetBinContent(i+1,j+1,    round(float(eff_mc),4))
             heffmc.SetBinError  (i+1,j+1,    round(float(eff_mc_err),4))
@@ -633,7 +659,7 @@ def main():
                 h_dphi_data_PASS,h_dphi_data_FAIL, 
                 h_dphi_mc_genunmatched_PASS_badbalance,h_dphi_mc_genmatched_PASS_badbalance,h_dphi_mc_genunmatched_FAIL_badbalance,h_dphi_mc_genmatched_FAIL_badbalance,
                 h_dphi_data_PASS_badbalance,h_dphi_data_FAIL_badbalance, 
-                outputDir,_pt[i], _eta[j], isData=True
+                outputDir,_pt[i], _eta[j], isData=True, doEtaBins=doEtaBins
             )
             heffdata.SetBinContent(i+1,j+1,    round(float(eff_data),4))
             heffdata.SetBinError  (i+1,j+1,    round(float(eff_data_err),4))
