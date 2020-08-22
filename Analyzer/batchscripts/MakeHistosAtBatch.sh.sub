@@ -16,7 +16,7 @@ MC17_DY_MG
 MC18_DY_MG
 )
 
-+JobFlavour  = "longlunch"
++JobFlavour  = "microcentury"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (
@@ -34,7 +34,7 @@ MC17_DY_MG_HW
 MC18_DY_MG_HW
 )
 
-+JobFlavour  = "microcentury"
++JobFlavour  = "espresso"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (
@@ -56,7 +56,7 @@ Data18C_DoubleMuon
 Data18D_DoubleMuon
 )
 
-+JobFlavour  = "microcentury"
++JobFlavour  = "espresso"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (

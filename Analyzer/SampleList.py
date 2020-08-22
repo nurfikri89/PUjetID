@@ -41,7 +41,7 @@ Samples["MC16_DY_AMCNLO"] = Sample(
 Samples["MC16_DY_MG_HW"] = Sample(
   name="MC16_DY_MG_HW",
   crabFiles=[
-    EOSDIR+CRABDIR+"DYJetsToLL_M-50_TuneCUETHS1_13TeV-madgraphMLM-herwigpp/JetPUId_MC16NanoAODv7_"+version+"/*/*/tree_*.root",
+    EOSDIR+CRABDIR+"DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-herwigpp_30M/JetPUId_MC16NanoAODv7_"+version+"/*/*/tree_*.root",
   ],
   ntupleFiles=[
     EOSDIR+NTUPDIR+"ntuple_MC16_DY_MG_HW.root"

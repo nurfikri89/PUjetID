@@ -5,8 +5,8 @@ import argparse
 from collections import OrderedDict 
 import datetime
 
+import array
 import ROOT
-import VariableList
 import SampleList
 
 ROOT.gROOT.SetBatch()
@@ -15,9 +15,73 @@ ROOT.gROOT.LoadMacro("./Helpers.h")
 #
 #
 #
-varNamesToPlot = [
-  "probeJet_dilep_dphi_norm"
+ptBins  = [20.,25.,30.,40.,50.]
+ptBinsArray = array.array('d',ptBins)
+ptBinsN = len(ptBins)-1
+ptBinsStr = []
+ptBinsStr.append("pt20To25")
+ptBinsStr.append("pt25To30")
+ptBinsStr.append("pt30To40")
+ptBinsStr.append("pt40To50")
+
+#
+#
+#
+etaBins = [
+  -5.000,
+  -3.000,
+  -2.750,
+  -2.500,
+  -2.000,
+  -1.479,
+  0.000,
+  +1.479,
+  +2.000,
+  +2.500,
+  +2.750,
+  +3.000,
+  +5.000
 ]
+etaBinsArray = array.array('d',etaBins)
+etaBinsN = len(etaBins)-1
+etaBinsStr = []  
+etaBinsStr.append("etaneg5p0Toneg3p0")
+etaBinsStr.append("etaneg3p0Toneg2p75")
+etaBinsStr.append("etaneg2p75Toneg2p5")
+etaBinsStr.append("etaneg2p5Toneg2p0")
+etaBinsStr.append("etaneg2p0Toneg1p479")
+etaBinsStr.append("etaneg1p479To0p0")
+etaBinsStr.append("eta0p0Topos1p479")
+etaBinsStr.append("etapos1p479Topos2p0")
+etaBinsStr.append("etapos2p0Topos2p5")
+etaBinsStr.append("etapos2p5Topos2p75")
+etaBinsStr.append("etapos2p75Topos3p0")
+etaBinsStr.append("etapos3p0Topos5p0")
+
+#
+#
+#
+absEtaBins = [
+  0.,1.479,2.0,2.5,2.75,3.0,5.0
+]
+absEtaBinsArray = array.array('d',absEtaBins)
+absEtaBinsN = len(absEtaBins)-1
+absEtaBinsStr = []  
+absEtaBinsStr.append("abseta0p0To1p479")
+absEtaBinsStr.append("abseta1p479To2p0")
+absEtaBinsStr.append("abseta2p0To2p5")
+absEtaBinsStr.append("abseta2p5To2p75")
+absEtaBinsStr.append("abseta2p75To3p0")
+absEtaBinsStr.append("abseta3p0To5p0")
+
+#
+#
+#
+dphiBinsN = 100
+dphiBinSize = 0.02
+dphiBins =[round(x*dphiBinSize, 2) for x in xrange(0,dphiBinsN+1)]
+dphiBinsArray = array.array('d',dphiBins)
+dphiBinsN = len(dphiBins)-1
 
 def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
 
@@ -42,6 +106,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
 
   # Read all files into RDataFrame
   df = ROOT.ROOT.RDataFrame("Events", vec)
+  
   isMC = False
   if "MC" in sample_name:
     isMC = True
@@ -71,7 +136,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
       df = df.Define("passNJetSel","(nJetSel>=1)&&(nJetSelPt30Eta5p0<=1)&&(nJetSelPt20Eta2p4<=1)")
     else:
       df = df.Define(systStr+"passNJetSel","("+systStrPre+"nJetSel>=1)&&("+systStrPre+"nJetSelPt30Eta5p0<=1)&&("+systStrPre+"nJetSelPt20Eta2p4<=1)")
-
+  
   #
   # Define flags for lepton channels if need to check by channel
   #
@@ -91,7 +156,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   df = df.Define("probeJet_puIdFlag_Tight", probeJetStr+"_puId & (1 << 0)")
   df = df.Define("probeJet_dilep_dphi",     probeJetStr+"_dilep_dphi")
   if isMC:
-    df = df.Define("probeJet_passGenMatch",probeJetStr+"_gen_match")
+    df = df.Define("probeJet_passGenMatch", probeJetStr+"_gen_match")
   #
   #
   #
@@ -131,6 +196,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   #############################################
   df_filters  = OrderedDict()
   df_filters["passNJetSel"] = df.Filter("passOS").Filter(systStrPre+"passNJetSel")
+
   #
   # Choose column used for PU Id cuts
   #
@@ -141,20 +207,22 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   puIDCuts["failPUIDLoose"]  = "!probeJet_puIdLoose_pass"
   puIDCuts["failPUIDMedium"] = "!probeJet_puIdMedium_pass"
   puIDCuts["failPUIDTight"]  = "!probeJet_puIdTight_pass"
+
   #
   # Define pt balance cuts
   #
   ptBalanceCuts = OrderedDict()
   ptBalanceCuts["goodBal"] = "probeJet_ptbalance_good"
   ptBalanceCuts["badBal"]  = "probeJet_ptbalance_bad"
-
+  
   selNames = []
+
   for ptBalCut in ptBalanceCuts:
     for puIDCut in puIDCuts:
-      selName = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut
+      cutNameStr = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut
       filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut]
-      df_filters[selName] = df_filters["passNJetSel"].Filter(filterStr)
-      selNames.append(selName)
+      df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
+      selNames.append(cutNameStr)
       #
       # Gen Matching requirement
       #
@@ -162,86 +230,17 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
         #
         # Pass
         #
-        selName = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut + "_passGenMatch"
+        cutNameStr = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut + "_passGenMatch"
         filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (probeJet_passGenMatch)"
-        df_filters[selName] = df_filters["passNJetSel"].Filter(filterStr)
-        selNames.append(selName)
+        df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
+        selNames.append(cutNameStr)
         #
         # Fail
         #
-        selName = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut + "_failGenMatch"
+        cutNameStr = "passNJetSel_probeJet_" + ptBalCut + "_" + puIDCut + "_failGenMatch"
         filterStr  = ptBalanceCuts[ptBalCut] + " && " + puIDCuts[puIDCut] + " && (!probeJet_passGenMatch)"
-        df_filters[selName] = df_filters["passNJetSel"].Filter(filterStr)
-        selNames.append(selName)
-
-  #
-  # Define probeJet eta bins
-  #
-  # etaBins = OrderedDict()
-  # # Abs(eta)
-  # # etaBins["abseta0p0To1p479"] = "(probeJet_abseta > 0.0)   && (probeJet_abseta <= 1.479)"
-  # # etaBins["abseta1p479To2p0"] = "(probeJet_abseta > 1.479) && (probeJet_abseta <= 2.0)"
-  # # etaBins["abseta2p0To2p5"]   = "(probeJet_abseta > 2.0)   && (probeJet_abseta <= 2.5)"
-  # # etaBins["abseta2p5To2p75"]  = "(probeJet_abseta > 2.5)   && (probeJet_abseta <= 2.75)"
-  # # etaBins["abseta2p75To3p0"]  = "(probeJet_abseta > 2.75)  && (probeJet_abseta <= 3.00)"
-  # # etaBins["abseta3p0To5p0"]   = "(probeJet_abseta > 3.0)   && (probeJet_abseta <= 5.0)"
-  # # negative eta
-  # etaBins["etaneg5p0Toneg3p0"]   = "(probeJet_eta < -3.0)   && (probeJet_eta >= -5.0)"
-  # etaBins["etaneg3p0Toneg2p75"]  = "(probeJet_eta < -2.75)  && (probeJet_eta >= -3.00)"
-  # etaBins["etaneg2p75Toneg2p5"]  = "(probeJet_eta < -2.5)   && (probeJet_eta >= -2.75)"
-  # etaBins["etaneg2p5Toneg2p0"]   = "(probeJet_eta < -2.0)   && (probeJet_eta >= -2.5)"
-  # etaBins["etaneg2p0Toneg1p479"] = "(probeJet_eta < -1.479) && (probeJet_eta >= -2.0)"
-  # etaBins["etaneg1p479To0p0"]    = "(probeJet_eta < 0.0)    && (probeJet_eta >= -1.479)"
-  # # positive eta
-  # etaBins["eta0p0Topos1p479"]    = "(probeJet_eta > 0.0)    && (probeJet_eta <= 1.479)"
-  # etaBins["etapos1p479Topos2p0"] = "(probeJet_eta > 1.479)  && (probeJet_eta <= 2.0)"
-  # etaBins["etapos2p0Topos2p5"]   = "(probeJet_eta > 2.0)    && (probeJet_eta <= 2.5)"
-  # etaBins["etapos2p5Topos2p75"]  = "(probeJet_eta > 2.5)    && (probeJet_eta <= 2.75)"
-  # etaBins["etapos2p75Topos3p0"]  = "(probeJet_eta > 2.75)   && (probeJet_eta <= 3.00)"
-  # etaBins["etapos3p0Topos5p0"]   = "(probeJet_eta > 3.0)    && (probeJet_eta <= 5.0)"
-  # #
-  # # Define probeJet pt bins
-  # #
-  # ptBins = OrderedDict()
-  # ptBins["pt20To25"]  = "(probeJet_pt > 20.) && (probeJet_pt <= 25.)"
-  # ptBins["pt25To30"]  = "(probeJet_pt > 25.) && (probeJet_pt <= 30.)"
-  # ptBins["pt30To40"]  = "(probeJet_pt > 30.) && (probeJet_pt <= 40.)"
-  # ptBins["pt40To50"]  = "(probeJet_pt > 40.) && (probeJet_pt <= 50.)"
-
-  etaBins = OrderedDict()
-  # negative eta
-  etaBins["etaneg5p0Toneg3p0"]   = "(probeJet_eta >= -5.000)  &&  (probeJet_eta < -3.000)"
-  etaBins["etaneg3p0Toneg2p75"]  = "(probeJet_eta >= -3.000)  &&  (probeJet_eta < -2.750)"
-  etaBins["etaneg2p75Toneg2p5"]  = "(probeJet_eta >= -2.750)  &&  (probeJet_eta < -2.500)"
-  etaBins["etaneg2p5Toneg2p0"]   = "(probeJet_eta >= -2.500)  &&  (probeJet_eta < -2.000)"
-  etaBins["etaneg2p0Toneg1p479"] = "(probeJet_eta >= -2.000)  &&  (probeJet_eta < -1.479)"
-  etaBins["etaneg1p479To0p0"]    = "(probeJet_eta >= -1.479)  &&  (probeJet_eta <  0.000)"
-  # positive eta
-  etaBins["eta0p0Topos1p479"]    = "(probeJet_eta >= 0.000)  && (probeJet_eta < 1.479)"
-  etaBins["etapos1p479Topos2p0"] = "(probeJet_eta >= 1.479)  && (probeJet_eta < 2.000)"
-  etaBins["etapos2p0Topos2p5"]   = "(probeJet_eta >= 2.000)  && (probeJet_eta < 2.500)"
-  etaBins["etapos2p5Topos2p75"]  = "(probeJet_eta >= 2.500)  && (probeJet_eta < 2.750)"
-  etaBins["etapos2p75Topos3p0"]  = "(probeJet_eta >= 2.750)  && (probeJet_eta < 3.000)"
-  etaBins["etapos3p0Topos5p0"]   = "(probeJet_eta >= 3.000)  && (probeJet_eta < 5.000)"
-  # Define probeJet pt bins
-  ptBins = OrderedDict()
-  ptBins["pt20To25"]  = "(probeJet_pt >= 20.) && (probeJet_pt < 25.)"
-  ptBins["pt25To30"]  = "(probeJet_pt >= 25.) && (probeJet_pt < 30.)"
-  ptBins["pt30To40"]  = "(probeJet_pt >= 30.) && (probeJet_pt < 40.)"
-  ptBins["pt40To50"]  = "(probeJet_pt >= 40.) && (probeJet_pt < 50.)"
-
-
-  #
-  # apply probeJet eta and pt cuts at the same time
-  #
-  cutNames = []
-  for selName in selNames:
-    for eta in etaBins:
-      for pt in ptBins:
-        cutNameStr = selName + "_"+ eta + "_" + pt
-        filterStr  = etaBins[eta] + " && " + ptBins[pt]
-        df_filters[cutNameStr] =  df_filters[selName].Filter(filterStr)
-        cutNames.append(cutNameStr)
+        df_filters[cutNameStr] = df_filters["passNJetSel"].Filter(filterStr)
+        selNames.append(cutNameStr)
 
   ##############################################
   #
@@ -250,37 +249,72 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   #
   #############################################
   cutLevels = []
-  cutLevels += cutNames
+  cutLevels += selNames
 
   ##############################################
   #
-  # Make the histograms
+  # Make the 3D histograms
   #
-  #############################################
+  ###############################################
+  Histograms3D = OrderedDict()
+  #
+  # etaBins
+  #
+  for cutLevel in cutLevels:
+    histoNameFinal  = "h3_%s_probeJet_pt_eta_dilep_dphi_norm%s" %(cutLevel,systStrPost)
+    histoInfo = ROOT.RDF.TH3DModel(histoNameFinal, histoNameFinal, ptBinsN, ptBinsArray, etaBinsN, etaBinsArray, dphiBinsN, dphiBinsArray)
+    Histograms3D[histoNameFinal] = df_filters[cutLevel].Histo3D(histoInfo, "probeJet_pt","probeJet_eta","probeJet_dilep_dphi_norm", weightName)
+  #
+  # absEtaBins
+  #
+  # for cutLevel in cutLevels:
+  #   histoNameFinal  = "h3_%s_probeJet_pt_abseta_dilep_dphi_norm%s" %(cutLevel,systStrPost)
+  #   histoInfo = ROOT.RDF.TH3DModel(histoNameFinal, histoNameFinal, ptBinsN, ptBinsArray, absEtaBinsN, absEtaBinsArray, dphiBinsN, dphiBinsArray)
+  #   Histograms3D[histoNameFinal] = df_filters[cutLevel].Histo3D(histoInfo, "probeJet_pt","probeJet_abseta","probeJet_dilep_dphi_norm", weightName)
+
+  print("Number of 3D histos: %s " %len(Histograms3D))
+  numOfEvents = df.Count()
+  print("Number of events in sample: %s " %numOfEvents.GetValue())
+
+  ##############################################
+  #
+  # Project the 3D histograms
+  #
+  ##############################################
+  def ProjectTH3(h3, HistoDict, systStrPost):
+
+    h3Name  = h3.GetName()
+    selName = h3Name.replace("h3_","")
+    
+    if "_eta_" in selName:
+      selName  = selName.replace("_probeJet_pt_eta_dilep_dphi_norm","")
+      nBinsY   = etaBinsN
+      yBinsStr = etaBinsStr
+    elif "_abseta_" in selName:
+      selName  = selName.replace("_probeJet_pt_abseta_dilep_dphi_norm","")
+      nBinsY   = absEtaBinsN
+      yBinsStr = absEtaBinsStr
+
+    nBinsX = ptBinsN
+    xBinsStr = ptBinsStr
+
+    if systStrPost != "":
+      selName = selName.replace(systStrPost,"")
+
+    for iBinX in xrange(1,nBinsX+1):
+      for iBinY in xrange(1,nBinsY+1):
+        binStr   = "%s_%s" %(yBinsStr[iBinY-1], xBinsStr[iBinX-1]) #eta first, then pt
+        histName = "h_%s_%s_probeJet_dilep_dphi_norm%s" %(selName, binStr, systStrPost)
+        HistoDict[histName] = h3.ProjectionZ(histName, iBinX, iBinX, iBinY, iBinY)
+    return HistoDict
+  
   Histograms = OrderedDict()
   #
   # Loop over cutLevels
   #
-  for cutLevel in cutLevels:
-    #
-    # Loop over variables to plot
-    #
-    for varName in varNamesToPlot:
-      var = VariableList.Variables[varName]
-      #
-      # Some exceptions 
-      #
-      if "probeJet" in varName and "passNJetSel" not in cutLevel: continue
-      #
-      # Define full name for histogram
-      #
-      histoNameFinal  = "h_%s_%s%s" %(cutLevel,varName,systStrPost)
-      histoInfo = (histoNameFinal, histoNameFinal+";"+var.xAxis+";"+var.yAxis, var.nbins, var.xmin, var.xmax)
-      Histograms[histoNameFinal] = df_filters[cutLevel].Histo1D(histoInfo, var.varNameInTree, weightName)
-
+  for hist3DName in Histograms3D:
+    Histograms = ProjectTH3(Histograms3D[hist3DName].GetValue(), Histograms, systStrPost)
   print("Number of 1D histos: %s " %len(Histograms))
-  numOfEvents = df.Count()
-  print("Number of events in sample: %s " %numOfEvents.GetValue())
   ##############################################
   #
   # Save histograms in output rootfile
@@ -289,15 +323,19 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   #
   # Create directory for output
   # 
-  outDir = './histos/'
+  outDir = './histos3D/'
   if not(os.path.isdir(outDir)):
     os.mkdir(outDir)
 
   # Open a new ROOT file to store TH1
-  outFileName = outDir+"Histo_"+sample_name+'.root'
+  outFileName = outDir+"Histo_%s%s.root"%(sample_name,systStrPost)
   f = ROOT.TFile(outFileName, 'RECREATE')
 
-  # Loop over the Histograms dictionary and store TH1 in ROOT file
+  # Loop over the Histograms3D dictionary and store TH3 in ROOT file
+  for hist3DName in Histograms3D:
+    Histograms3D[hist3DName].Write()
+
+  # Loop over the Histograms1D dictionary and store TH3 in ROOT file
   for histName in Histograms:
     Histograms[histName].Write()
 
@@ -323,7 +361,6 @@ if __name__== "__main__":
   isMC = False
   if "MC" in args.sample:
     isMC = True
-  
   #
   # List all jet energy scale and resolution systematics
   #
@@ -340,6 +377,7 @@ if __name__== "__main__":
   if "AMCNLO" in args.sample: ak4Systematics=[]
   
   ROOT.ROOT.EnableImplicitMT(args.cores)
+
   #
   # Do Nominal
   #
@@ -354,4 +392,3 @@ if __name__== "__main__":
   elapsed = time_end - time_start
   elapsed_str = str(datetime.timedelta(seconds=elapsed.seconds))
   print("MakeHistograms.py::DONE::Sample("+args.sample+")::Time("+str(time_end)+")::Elapsed("+elapsed_str+")")
-
