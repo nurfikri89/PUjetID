@@ -31,6 +31,7 @@ def main(sample_name):
   
   # Read all files into RDataFrame
   df = ROOT.ROOT.RDataFrame("Events", vec)
+
   isMC = False
   ak4Systematics = []
   if "MC" in sample_name:
@@ -41,7 +42,12 @@ def main(sample_name):
       "jerUp",
       "jerDown"
     ]
-
+  
+  #
+  # Don't do ak4Systematics for MG+HW and AMCNLO
+  #
+  if "MG_HW" in sample_name: ak4Systematics=[]
+  if "AMCNLO" in sample_name: ak4Systematics=[]
   #############################################
   #
   # Define columns
@@ -51,7 +57,7 @@ def main(sample_name):
   df = df.Define("passNJetSel","(nJetSel>=1)&&(nJetSelPt30Eta5p0<=1)&&(nJetSelPt20Eta2p4<=1)")
   if isMC:
     for syst in ak4Systematics:
-      df = df.Define("passNJetSel_"+syst,"("+sys+"_nJetSel>=1)&&("+sys+"_nJetSelPt30Eta5p0<=1)&&("+sys+"_nJetSelPt20Eta2p4<=1)")
+      df = df.Define(syst+"_passNJetSel","("+syst+"_nJetSel>=1)&&("+syst+"_nJetSelPt30Eta5p0<=1)&&("+syst+"_nJetSelPt20Eta2p4<=1)")
 
   #############################################
   #
@@ -60,10 +66,11 @@ def main(sample_name):
   #############################################
   df_filters = OrderedDict()
   df_filters["passOS"] = df.Filter("passOS")
-  df_filters["passNJetSel"] = df_filters["passOS"].Filter("passNJetSel")
-  if isMC:
-    for syst in ak4Systematics:
-      df_filters["passNJetSel_"+syst] = df_filters["passOS"].Filter("passNJetSel_"+syst)
+
+  filtStringNJetSel = "passNJetSel"
+  for syst in ak4Systematics:
+    filtStringNJetSel += "||"+syst+"_passNJetSel"
+  df_filters["passNJetSelAll"] = df_filters["passOS"].Filter(filtStringNJetSel)
 
   #############################################
   #
@@ -91,17 +98,7 @@ def main(sample_name):
   outTreeName="Events"
   outTreeFileName = "%sntuple_%s.root" %(prefix,sample_name)
   print "Save tree %s in file %s" %(outTreeName,outTreeFileName)
-  df_filters["passNJetSel"].Snapshot(outTreeName, outTreeFileName) 
-  #
-  # Do the same for MC with systematics
-  #
-  if isMC:
-    for syst in ak4Systematics:
-      outTreeName="Events_"+syst
-      outTreeFileName = "%sntuple_%s_%s.root" %(prefix,sample_name,syst)
-      print "Save tree %s in file %s" %(outTreeName,outTreeFileName)
-      df_filters["passNJetSel_"+syst].Snapshot(outTreeName, outTreeFileName)
-
+  df_filters["passNJetSelAll"].Snapshot(outTreeName, outTreeFileName) 
   print "Initial Events in Tree: ", initialCount.GetValue()
 
 if __name__== "__main__":
