@@ -2,9 +2,8 @@ import collections
 import ROOT
 import os
 
-def main():
+def main(version="results", year="2016"):
 
-  version="results/"
   inDir="../"+version
 
   ptBins = [
@@ -45,19 +44,27 @@ def main():
         (ptBin[0]+"_"+etaBin[0], ptBin[1]+","+etaBin[1])
       ]
 
-  WPYearList = [
-    (inDir+"/2016_WPLoose",  "2016_Loose",  "2016 Loose WP"),
-    (inDir+"/2016_WPMedium", "2016_Medium", "2016 Medium WP"),
-    (inDir+"/2016_WPTight",  "2016_Tight",  "2016 Tight WP"),
-    (inDir+"/2017_WPLoose",  "2017_Loose",  "2017 Loose WP"),
-    (inDir+"/2017_WPMedium", "2017_Medium", "2017 Medium WP"),
-    (inDir+"/2017_WPTight",  "2017_Tight",  "2017 Tight WP"),
-    (inDir+"/2018_WPLoose",  "2018_Loose",  "2018 Loose WP"),
-    (inDir+"/2018_WPMedium", "2018_Medium", "2018 Medium WP"),
-    (inDir+"/2018_WPTight",  "2018_Tight",  "2018 Tight WP"),
-  ]
+  WPYearList = []
+  if year == "2016":
+    WPYearList = [
+      (inDir+"/2016_WPLoose",  "2016_Loose",  "2016 Loose WP"),
+      (inDir+"/2016_WPMedium", "2016_Medium", "2016 Medium WP"),
+      (inDir+"/2016_WPTight",  "2016_Tight",  "2016 Tight WP"),
+    ]
+  elif year == "2017":
+    WPYearList = [
+      (inDir+"/2017_WPLoose",  "2017_Loose",  "2017 Loose WP"),
+      (inDir+"/2017_WPMedium", "2017_Medium", "2017 Medium WP"),
+      (inDir+"/2017_WPTight",  "2017_Tight",  "2017 Tight WP"),
+    ]
+  elif year == "2018":
+    WPYearList = [
+      (inDir+"/2018_WPLoose",  "2018_Loose",  "2018 Loose WP"),
+      (inDir+"/2018_WPMedium", "2018_Medium", "2018 Medium WP"),
+      (inDir+"/2018_WPTight",  "2018_Tight",  "2018 Tight WP"),
+    ]
 
-  outFileName="DumpPlots_PUIDSF_"+version
+  outFileName="DumpPlots_PUIDSF_"+version+"_"+year
   outFile = open(outFileName+".tex","w")
 
   makeHeader(outFile)
@@ -191,5 +198,9 @@ def makeEndDocument(outFile):
   outFile.write("\\end{document}\n")
 
 if __name__ == "__main__":
-  main()
+  
+  version="results_vp41"
+  main(version,"2016")
+  main(version,"2017")
+  main(version,"2018")
 
