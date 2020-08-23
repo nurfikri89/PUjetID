@@ -294,7 +294,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
     os.mkdir(outDir)
 
   # Open a new ROOT file to store TH1
-  outFileName = outDir+"Histo_"+sample_name+'.root'
+  outFileName = "%sHisto_%s%s.root"%(outDir,sample_name,systStrPost)
   f = ROOT.TFile(outFileName, 'RECREATE')
 
   # Loop over the Histograms dictionary and store TH1 in ROOT file
@@ -330,10 +330,10 @@ if __name__== "__main__":
   ak4Systematics=[]
   if isMC:
     ak4Systematics=[
-      # "jesTotalUp",
-      # "jesTotalDown",
-      # "jerUp",
-      # "jerDown"
+      "jesTotalUp",
+      "jesTotalDown",
+      "jerUp",
+      "jerDown"
     ]
   # Don't do ak4Systematics for MG+HW and AMCNLO
   if "MG_HW" in args.sample: ak4Systematics=[]

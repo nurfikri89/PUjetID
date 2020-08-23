@@ -328,7 +328,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
     os.mkdir(outDir)
 
   # Open a new ROOT file to store TH1
-  outFileName = outDir+"Histo_%s%s.root"%(sample_name,systStrPost)
+  outFileName = "%sHisto_%s%s.root"%(outDir,sample_name,systStrPost)
   f = ROOT.TFile(outFileName, 'RECREATE')
 
   # Loop over the Histograms3D dictionary and store TH3 in ROOT file
