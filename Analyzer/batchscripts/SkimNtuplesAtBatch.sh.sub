@@ -12,14 +12,14 @@ stream_error          = True
 #
 ############################
 
-+JobFlavour  = "longlunch"
++JobFlavour  = "microcentury"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (
 MCUL17_DY_MG
 )
 
-+JobFlavour  = "longlunch"
++JobFlavour  = "microcentury"
 request_cpus = 4
 arguments    = $(SAMPLE) 4
 queue SAMPLE from (

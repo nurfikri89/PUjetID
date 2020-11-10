@@ -28,10 +28,12 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   ntupleFiles = []
 
   if "DataUL" in sample_name or "MCUL" in sample_name:
+    EOSURL      = SampleListUL.EOSURL
     crabFiles   = SampleListUL.Samples[sample_name].crabFiles
     ntupleFiles = SampleListUL.Samples[sample_name].ntupleFiles
     isUL=True
   else:
+    EOSURL      = SampleList.EOSURL
     crabFiles   = SampleList.Samples[sample_name].crabFiles
     ntupleFiles = SampleList.Samples[sample_name].ntupleFiles
 
@@ -42,12 +44,12 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
     print "Globbing File Paths:"
     for files in ntupleFiles:
       print files
-      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+      FileList += [EOSURL+f for f in glob.glob(files)]
   else:
     print "Globbing File Paths:"
     for files in crabFiles:
       print files
-      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+      FileList += [EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
@@ -139,7 +141,6 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
       df = df.Define("probeJet_puIdMedium_pass", "PUJetID_80XCut_WPMedium("+argStr+")")
       df = df.Define("probeJet_puIdTight_pass",  "PUJetID_80XCut_WPTight("+argStr+")")
   else: #UL
-    if useNewTraining:
       argStr = "probeJet_pt,probeJet_eta,probeJet_puIdDiscOTF"
       df = df.Define("probeJet_puIdLoose_pass",  "PUJetID_106XUL17Cut_WPLoose("+argStr+")")
       df = df.Define("probeJet_puIdMedium_pass", "PUJetID_106XUL17Cut_WPMedium("+argStr+")")
@@ -368,7 +369,7 @@ if __name__== "__main__":
   #
   # Do Nominal
   #
-  # main(args.sample,args.useSkimNtuples,"",args.useNewTraining)
+  main(args.sample,args.useSkimNtuples,"",args.useNewTraining)
   #
   # Do Systematics
   #
@@ -379,4 +380,3 @@ if __name__== "__main__":
   elapsed = time_end - time_start
   elapsed_str = str(datetime.timedelta(seconds=elapsed.seconds))
   print("MakeHistograms.py::DONE::Sample("+args.sample+")::Time("+str(time_end)+")::Elapsed("+elapsed_str+")")
-

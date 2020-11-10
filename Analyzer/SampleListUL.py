@@ -1,12 +1,7 @@
 import collections
+from SampleList import Sample
 
-class Sample:
-  def __init__(self, name="", crabFiles=[], ntupleFiles=[]):
-    self.name  = name
-    self.crabFiles = crabFiles 
-    self.ntupleFiles = ntupleFiles 
-
-version="DiLeptonSkim_JMEnanoUL_v0p1"
+version="DiLeptonSkim_JMEnanoUL_v0p2"
 
 EOSURL="root://eoscms.cern.ch/"
 EOSDIR="/eos/cms/store/group/phys_jetmet/nbinnorj/"
@@ -88,9 +83,9 @@ Samples["DataUL17F_DoubleMuon"] = Sample(
     EOSDIR+NTUPDIR+"ntuple_DataUL17F_DoubleMuon.root"
   ]
 )
+
 ################################################
 #
 # 2018
 #
 ################################################
-

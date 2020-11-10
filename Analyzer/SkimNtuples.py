@@ -19,14 +19,20 @@ def main(sample_name):
   crabFiles = []
   if "DataUL" in sample_name or "MCUL" in sample_name:
     crabFiles = SampleListUL.Samples[sample_name].crabFiles
+    EOSURL=SampleListUL.EOSURL
+    EOSDIR=SampleListUL.EOSDIR
+    NTUPDIR=SampleListUL.NTUPDIR
   else:
     crabFiles = SampleList.Samples[sample_name].crabFiles
+    EOSURL=SampleList.EOSURL
+    EOSDIR=SampleList.EOSDIR
+    NTUPDIR=SampleList.NTUPDIR
 
   print "Globbing File Paths:"
   FileList = []
   for files in crabFiles:
     print files
-    FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+    FileList += [EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
@@ -92,9 +98,9 @@ def main(sample_name):
   #
   # Save at EOS
   #
-  prefix=SampleList.EOSURL
-  prefix+=SampleList.EOSDIR
-  prefix+=SampleList.NTUPDIR
+  prefix=EOSURL
+  prefix+=EOSDIR
+  prefix+=NTUPDIR
   #
   #
   #

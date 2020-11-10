@@ -92,13 +92,14 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   ntupleFiles = []
 
   if "DataUL" in sample_name or "MCUL" in sample_name:
+    EOSURL      = SampleListUL.EOSURL
     crabFiles   = SampleListUL.Samples[sample_name].crabFiles
     ntupleFiles = SampleListUL.Samples[sample_name].ntupleFiles
     isUL=True
   else:
+    EOSURL      = SampleList.EOSURL
     crabFiles   = SampleList.Samples[sample_name].crabFiles
     ntupleFiles = SampleList.Samples[sample_name].ntupleFiles
-
 
   FileList = []
 
@@ -106,12 +107,12 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
     print "Globbing File Paths:"
     for files in ntupleFiles:
       print files
-      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+      FileList += [EOSURL+f for f in glob.glob(files)]
   else:
     print "Globbing File Paths:"
     for files in crabFiles:
       print files
-      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+      FileList += [EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
@@ -360,7 +361,7 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   for hist3DName in Histograms3D:
     Histograms3D[hist3DName].Write()
 
-  # Loop over the Histograms1D dictionary and store TH3 in ROOT file
+  # Loop over the Histograms1D dictionary and store TH1 in ROOT file
   for histName in Histograms:
     Histograms[histName].Write()
 
@@ -386,6 +387,7 @@ if __name__== "__main__":
   isMC = False
   if "MC" in args.sample:
     isMC = True
+
   #
   # List all jet energy scale and resolution systematics
   #
@@ -402,7 +404,6 @@ if __name__== "__main__":
   if "AMCNLO" in args.sample: ak4Systematics=[]
   
   ROOT.ROOT.EnableImplicitMT(args.cores)
-
   #
   # Do Nominal
   #

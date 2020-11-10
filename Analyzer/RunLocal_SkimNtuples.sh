@@ -43,7 +43,23 @@ SAMPLES=(
 # Data18B_EGamma
 # Data18C_EGamma
 # Data18D_EGamma
+# DataUL17B_DoubleMuon
+# DataUL17C_DoubleMuon
+# DataUL17D_DoubleMuon
+# DataUL17E_DoubleMuon
+# DataUL17F_DoubleMuon
 )
+
+SAMPLES=(
+# MCUL17_DY_MG
+# MCUL17_DY_AMCNLO
+# DataUL17B_DoubleMuon
+# DataUL17C_DoubleMuon
+# DataUL17D_DoubleMuon
+# DataUL17E_DoubleMuon
+# DataUL17F_DoubleMuon
+)
+
 #
 # Make skimmed ntuples
 #
