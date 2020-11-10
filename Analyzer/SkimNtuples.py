@@ -7,6 +7,7 @@ from collections import OrderedDict
 import ROOT
 import VariableList
 import SampleList
+import SampleListUL
 
 import datetime
 
@@ -15,9 +16,15 @@ ROOT.gROOT.LoadMacro("./Helpers.h")
 
 def main(sample_name):
 
-  FileList = []
+  crabFiles = []
+  if "DataUL" in sample_name or "MCUL" in sample_name:
+    crabFiles = SampleListUL.Samples[sample_name].crabFiles
+  else:
+    crabFiles = SampleList.Samples[sample_name].crabFiles
+
   print "Globbing File Paths:"
-  for files in SampleList.Samples[sample_name].crabFiles:
+  FileList = []
+  for files in crabFiles:
     print files
     FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
   
