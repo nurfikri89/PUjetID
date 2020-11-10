@@ -1,12 +1,11 @@
-import ROOT
-ROOT.PyConfig.IgnoreCommandLineOptions = True
-
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection,Object
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import *
-
 import math
 import array
+import os
+import ROOT
+ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 class SkimmerDiLepton(Module):
   def __init__(self, isMC, era, isDoubleElecData=False, isDoubleMuonData=False):
@@ -27,9 +26,157 @@ class SkimmerDiLepton(Module):
       "jerUp",
       "jerDown"
     ]
+    #
+    #
+    #
     self.jetSystsList = [""] # Nominal
     if self.isMC:
       self.jetSystsList.extend(ak4Systematics)
+    #
+    #
+    #
+    self.calcBDTDiscOTF = False
+    if self.era == "UL2017": 
+      self.setupTMVAReader()
+      self.calcBDTDiscOTF = True
+
+  def setupTMVAReader(self):
+    self.tmvaWeightsPath = os.environ['CMSSW_BASE']+"/src/PUjetID/Skimmer/data/mvaWeights/"
+    #
+    # TMVA BDT weights
+    #
+    self.tmvaWeightFilenames = []
+    # UL 2017 training weights
+    if self.era == "UL2017": 
+      self.tmvaWeightFilenames = [
+        self.tmvaWeightsPath+"pileupJetId_UL17_Eta0p0To2p5_chs_BDT.weights.xml",
+        self.tmvaWeightsPath+"pileupJetId_UL17_Eta2p5To2p75_chs_BDT.weights.xml",
+        self.tmvaWeightsPath+"pileupJetId_UL17_Eta2p75To3p0_chs_BDT.weights.xml",
+        self.tmvaWeightsPath+"pileupJetId_UL17_Eta3p0To5p0_chs_BDT.weights.xml",
+      ]
+    #
+    # Eta bins
+    #
+    self.eta_bins = [
+      "Eta0p0To2p5",
+      "Eta2p5To2p75",
+      "Eta2p75To3p0",
+      "Eta3p0To5p0"
+    ]
+    #
+    # Define variables to be provided to TMVA::Reader
+    #
+    self.tmva_v_nvtx       = array.array("f", [-999.])
+    self.tmva_v_beta       = array.array("f", [-999.])
+    self.tmva_v_dR2Mean    = array.array("f", [-999.])
+    self.tmva_v_frac01     = array.array("f", [-999.])
+    self.tmva_v_frac02     = array.array("f", [-999.])
+    self.tmva_v_frac03     = array.array("f", [-999.])
+    self.tmva_v_frac04     = array.array("f", [-999.])
+    self.tmva_v_majW       = array.array("f", [-999.])
+    self.tmva_v_minW       = array.array("f", [-999.])
+    self.tmva_v_jetR       = array.array("f", [-999.])
+    self.tmva_v_jetRchg    = array.array("f", [-999.])
+    self.tmva_v_nParticles = array.array("f", [-999.])
+    self.tmva_v_nCharged   = array.array("f", [-999.])
+    self.tmva_v_ptD        = array.array("f", [-999.])
+    self.tmva_v_pull       = array.array("f", [-999.])
+    # NOTE: It is important that this list follows
+    # the order of the variables as in the tmva weights
+    # files
+    self.tmva_variables = [
+      ("nvtx" ,       self.tmva_v_nvtx),
+      ("beta",        self.tmva_v_beta),
+      ("dR2Mean",     self.tmva_v_dR2Mean),
+      ("frac01",      self.tmva_v_frac01),
+      ("frac02",      self.tmva_v_frac02),
+      ("frac03",      self.tmva_v_frac03),
+      ("frac04",      self.tmva_v_frac04),
+      ("majW",        self.tmva_v_majW),
+      ("minW",        self.tmva_v_minW),
+      ("jetR",        self.tmva_v_jetR),
+      ("jetRchg",     self.tmva_v_jetRchg),
+      ("nParticles",  self.tmva_v_nParticles),
+      ("nCharged",    self.tmva_v_nCharged),
+      ("ptD",         self.tmva_v_ptD),
+      ("pull",        self.tmva_v_pull),
+    ]
+    self.tmva_s_jetPt  = array.array("f", [-999])
+    self.tmva_s_jetEta = array.array("f", [-999])
+    self.tmva_spectators = [
+      ("jetPt",  self.tmva_s_jetPt),
+      ("jetEta", self.tmva_s_jetEta),
+    ]
+    self.tmva_readers = []
+    if len(self.eta_bins) == len(self.tmvaWeightFilenames):
+      #
+      # For each eta bin, setup a TMVA::Reader
+      #
+      for i, eta_bin in enumerate(self.eta_bins):
+        #
+        # Initialize TMVA::Reader
+        #
+        self.tmva_readers.append(ROOT.TMVA.Reader("!Color:!Silent"))
+        #
+        # Add spectator variables
+        #
+        for spec_name, spec_address in self.tmva_spectators:
+          self.tmva_readers[i].AddSpectator(spec_name, spec_address)
+        #
+        # Add training variables
+        #
+        for var_name, var_address in self.tmva_variables: 
+          # For the last eta bin, we don't use the following
+          # variables in training.
+          if eta_bin == "Eta3p0To5p0":
+            if var_name == "beta": continue
+            if var_name == "jetRchg": continue
+            if var_name == "nCharged": continue
+          self.tmva_readers[i].AddVariable(var_name, var_address)
+        #
+        # Book BDT
+        #
+        self.tmva_readers[i].BookMVA("BDT", self.tmvaWeightFilenames[i])
+    else:
+      raise ValueError("ERROR: eta_bins length not the same as tmvaWeightFilenames length. Please check!")
+
+  def calcPUIDBDTDisc(self, event, jet):
+    #
+    jet_pt = jet.pt 
+    jet_eta = jet.eta
+    #
+    self.tmva_s_jetPt[0]  = jet_pt
+    self.tmva_s_jetEta[0] = jet_eta
+    #
+    self.tmva_v_nvtx[0]       = event.PV_npvsGood
+    self.tmva_v_beta[0]       = jet.puId_beta
+    self.tmva_v_dR2Mean[0]    = jet.puId_dR2Mean
+    self.tmva_v_frac01[0]     = jet.puId_frac01
+    self.tmva_v_frac02[0]     = jet.puId_frac02
+    self.tmva_v_frac03[0]     = jet.puId_frac03
+    self.tmva_v_frac04[0]     = jet.puId_frac04
+    self.tmva_v_majW[0]       = jet.puId_majW
+    self.tmva_v_minW[0]       = jet.puId_minW
+    self.tmva_v_jetR[0]       = jet.puId_jetR
+    self.tmva_v_jetRchg[0]    = jet.puId_jetRchg
+    self.tmva_v_nParticles[0] = jet.nConstituents
+    self.tmva_v_nCharged[0]   = jet.puId_nCharged
+    self.tmva_v_ptD[0]        = jet.puId_ptD
+    self.tmva_v_pull[0]       = jet.puId_pull
+    #
+    # Determine which etaBin this jet is in
+    #
+    etaBinIdx = -1
+    if abs(jet_eta) > 0.00 and abs(jet_eta) <= 2.50:
+      etaBinIdx = 0
+    elif abs(jet_eta) > 2.50 and abs(jet_eta) <= 2.75:
+      etaBinIdx = 1
+    elif abs(jet_eta) > 2.75 and abs(jet_eta) <= 3.00:
+      etaBinIdx = 2
+    elif abs(jet_eta) > 3.00 and abs(jet_eta) <= 5.00:
+      etaBinIdx = 3
+    #
+    return self.tmva_readers[etaBinIdx].EvaluateMVA("BDT")
 
   def beginJob(self,histFile=None,histDirName=None):
     Module.beginJob(self)
@@ -81,6 +228,7 @@ class SkimmerDiLepton(Module):
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_jetId",      "I")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_puId",       "I")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_puIdDisc",   "F")# Starting from NanoAODv7
+        self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_puIdDiscOTF","F")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_qgl",        "F")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_nConst",     "I")
         self.out.branch(jetSystPreFix+"jetSel"+str(i)+"_chEmEF",     "F")
@@ -190,6 +338,9 @@ class SkimmerDiLepton(Module):
     elif self.era == "2018":
       if hasattr(event, 'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'):
         event.passElectronTrig |= event.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL
+    elif self.era == "UL2017":
+      if hasattr(event, 'HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL'):
+        event.passElectronTrig |= event.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL
     
     return True if event.passElectronTrig else False
       
@@ -214,6 +365,9 @@ class SkimmerDiLepton(Module):
     elif self.era == "2018":
       if hasattr(event, 'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8'):
         event.passMuonTrig |= event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
+    elif self.era == "UL2017":
+      if hasattr(event, 'HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8'):
+        event.passMuonTrig |= event.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
     
     return True if event.passMuonTrig else False
  
@@ -546,12 +700,12 @@ class SkimmerDiLepton(Module):
     for i, jet in enumerate(event.jetsSel):
       if i >= self.maxNSelJetsSaved: break
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt",      getattr(jet, jetPtName))
-      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt_nom",  getattr(jet, "pt_nom") if self.isMC else jet.pt)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt_nom",  getattr(jet, "pt_nom") if self.isMC and hasattr(jet, "pt_nom") else jet.pt)# Fix this
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_pt_nano", jet.pt)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_eta",     jet.eta)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_phi",     jet.phi)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass",    getattr(jet, jetMassName))
-      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nom",getattr(jet, "mass_nom") if self.isMC else jet.mass)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nom",getattr(jet, "mass_nom") if self.isMC and hasattr(jet, "mass_nom") else jet.mass)# Fix this
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_mass_nano",jet.mass)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_jetId",   jet.jetId)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puId",    jet.puId)
@@ -564,6 +718,14 @@ class SkimmerDiLepton(Module):
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_neHEF",   jet.neHEF)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_muEF",    jet.muEF)
       self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_dilep_dphi",event.dilep_p4.DeltaPhi(jet.p4()))
+      #
+      # This is where we calculate the PU BDT discriminant
+      #
+      puIdDiscOTF = -9.
+      if self.calcBDTDiscOTF:
+        jetPuIdDiscOTF = self.calcPUIDBDTDisc(event, jet)
+      self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_puIdDiscOTF",jetPuIdDiscOTF)
+      #
       if self.isMC:
         self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_partflav",jet.partonFlavour)
         self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_hadflav", jet.hadronFlavour)
@@ -576,15 +738,21 @@ class SkimmerDiLepton(Module):
           self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_mass", genJet.mass)
           self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_partflav", genJet.partonFlavour)
           self.out.fillBranch(jetSystPreFix+"jetSel"+str(i)+"_gen_hadflav",  genJet.hadronFlavour)
-
+#
+# EOY
+#
 SkimmerDiLepton_2016_data_dielectron = lambda : SkimmerDiLepton(isMC=False, era="2016", isDoubleElecData=True) 
 SkimmerDiLepton_2017_data_dielectron = lambda : SkimmerDiLepton(isMC=False, era="2017", isDoubleElecData=True) 
 SkimmerDiLepton_2018_data_dielectron = lambda : SkimmerDiLepton(isMC=False, era="2018", isDoubleElecData=True) 
-
 SkimmerDiLepton_2016_data_dimuon = lambda : SkimmerDiLepton(isMC=False, era="2016", isDoubleMuonData=True) 
 SkimmerDiLepton_2017_data_dimuon = lambda : SkimmerDiLepton(isMC=False, era="2017", isDoubleMuonData=True) 
-SkimmerDiLepton_2018_data_dimuon = lambda : SkimmerDiLepton(isMC=False, era="2018", isDoubleMuonData=True) 
-
-SkimmerDiLepton_2016_mc   = lambda : SkimmerDiLepton(isMC=True,  era="2016") 
-SkimmerDiLepton_2017_mc   = lambda : SkimmerDiLepton(isMC=True,  era="2017") 
-SkimmerDiLepton_2018_mc   = lambda : SkimmerDiLepton(isMC=True,  era="2018") 
+SkimmerDiLepton_2018_data_dimuon = lambda : SkimmerDiLepton(isMC=False, era="2018", isDoubleMuonData=True)
+SkimmerDiLepton_2016_mc = lambda : SkimmerDiLepton(isMC=True,  era="2016") 
+SkimmerDiLepton_2017_mc = lambda : SkimmerDiLepton(isMC=True,  era="2017") 
+SkimmerDiLepton_2018_mc = lambda : SkimmerDiLepton(isMC=True,  era="2018") 
+#
+# Ultra-Legacy
+#
+SkimmerDiLepton_UL2017_data_dielectron = lambda : SkimmerDiLepton(isMC=False, era="UL2017", isDoubleElecData=True)
+SkimmerDiLepton_UL2017_data_dimuon = lambda : SkimmerDiLepton(isMC=False, era="UL2017", isDoubleMuonData=True) 
+SkimmerDiLepton_UL2017_mc = lambda : SkimmerDiLepton(isMC=True,  era="UL2017") 
