@@ -58,9 +58,22 @@ if era == "2016":
       files = [
         "/store/data/Run2016H/DoubleEG/NANOAOD/02Apr2020-v1/250000/47FD42C2-6583-D941-95F4-1BFF0061C7D5.root",
       ]
-
-CMSXROOTD="root://xrootd-cms.infn.it/"
-files = [CMSXROOTD+file for file in files]
+  CMSXROOTD="root://xrootd-cms.infn.it/"
+  files = [CMSXROOTD+file for file in files]
+elif era == "UL2017":
+  if isMC:
+    files = [
+      "/eos/cms/store/group/phys_jetmet/JMEnanoV01/UL17/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL17JMEnanoV1-106X_mc2017_realistic_v6-v2/201026_101150/0000/step1_NANO_1.root"
+    ]
+  else:
+    if isDoubleMuonData:
+      files = [
+        "/eos/cms/store/group/phys_jetmet/JMEnanoV01/UL17/DoubleMuon/Run2017B-09Aug2019_UL2017-v1_JMEnanoV1/201026_100435/0000/step1_NANO_1.root",
+      ]
+    elif isDoubleElecData:
+      files = []
+  CMSXROOTD="root://eoscms.cern.ch/"
+  files = [CMSXROOTD+file for file in files]
 
 varTxtFileIn="./script/branches_in.txt"
 varTxtFileOut="./script/branches_out.txt"

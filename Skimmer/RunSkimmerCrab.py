@@ -5,21 +5,6 @@ import argparse
 ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import *
-from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2016
-from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2017
-from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2018
-
-from PhysicsTools.NanoAODTools.postprocessing.modules.jme.jetmetHelperRun2 import * 
-
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2016_mc
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2017_mc
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2018_mc
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2016_data_dielectron
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2017_data_dielectron
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2018_data_dielectron
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2016_data_dimuon 
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2017_data_dimuon 
-from PUjetID.Skimmer.SkimmerDiLepton import SkimmerDiLepton_2018_data_dimuon 
 
 print "RunSkimmerCrab.py START"
 
@@ -98,4 +83,3 @@ p.run()
 
 print "RunSkimmerCrab.py DONE"
 os.system("ls -lR")
-

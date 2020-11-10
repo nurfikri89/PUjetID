@@ -8,6 +8,7 @@ import datetime
 import ROOT
 import VariableList
 import SampleList
+import SampleListUL
 
 ROOT.gROOT.SetBatch()
 ROOT.gROOT.LoadMacro("./Helpers.h")
@@ -20,19 +21,35 @@ varNamesToPlot = [
 ]
 
 def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
+  
+  isUL=False
+  
+  crabFiles   = []
+  ntupleFiles = []
+
+  if "DataUL" in sample_name or "MCUL" in sample_name:
+    EOSURL      = SampleListUL.EOSURL
+    crabFiles   = SampleListUL.Samples[sample_name].crabFiles
+    ntupleFiles = SampleListUL.Samples[sample_name].ntupleFiles
+    isUL=True
+  else:
+    EOSURL      = SampleList.EOSURL
+    crabFiles   = SampleList.Samples[sample_name].crabFiles
+    ntupleFiles = SampleList.Samples[sample_name].ntupleFiles
+
 
   FileList = []
 
   if useSkimNtuples:
     print "Globbing File Paths:"
-    for files in SampleList.Samples[sample_name].ntupleFiles:
+    for files in ntupleFiles:
       print files
-      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+      FileList += [EOSURL+f for f in glob.glob(files)]
   else:
     print "Globbing File Paths:"
-    for files in SampleList.Samples[sample_name].crabFiles:
+    for files in crabFiles:
       print files
-      FileList += [SampleList.EOSURL+f for f in glob.glob(files)]
+      FileList += [EOSURL+f for f in glob.glob(files)]
   
   # Creating std::vector as filelist holder to be plugged into RDataFrame
   vec = ROOT.vector('string')()
@@ -92,6 +109,8 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   df = df.Define("probeJet_dilep_dphi",     probeJetStr+"_dilep_dphi")
   if isMC:
     df = df.Define("probeJet_passGenMatch",probeJetStr+"_gen_match")
+  if isUL:
+    df = df.Define("probeJet_puIdDiscOTF",  probeJetStr+"_puIdDiscOTF")
   #
   #
   #
@@ -99,26 +118,33 @@ def main(sample_name, useSkimNtuples, systStr, useNewTraining=False):
   df = df.Define("probeJet_dilep_ptbalance","dilep_pt/probeJet_pt")
   #
   # Define pileup ID cuts
-  #
-  # Guide on how to read the pileup ID bitmap variable: 
-  # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID#miniAOD_and_nanoAOD
-  # NOTE: The pileup ID decision flag stored in NanoAOD (v7 and earlier) is based on 
-  # the 80X BDT training and working point (as in the parent MiniAOD).
   # 
-  if not useNewTraining:
-    df = df.Define("probeJet_puIdLoose_pass",  "probeJet_puIdFlag_Loose")
-    df = df.Define("probeJet_puIdMedium_pass", "probeJet_puIdFlag_Medium")
-    df = df.Define("probeJet_puIdTight_pass",  "probeJet_puIdFlag_Tight")
-  #
-  # Starting from NanoAODv7, the pileup ID BDT discriminant value is stored for each jet.
-  # The discriminant is calculated based on the appropriate training for each Run-2 year.
-  # i.e 80X for 2016, 94X for 2017 and 102X for 2018
-  #
-  else:
-    argStr = "probeJet_pt,probeJet_eta,probeJet_puIdDisc"
-    df = df.Define("probeJet_puIdLoose_pass",  "PUJetID_80XCut_WPLoose("+argStr+")")
-    df = df.Define("probeJet_puIdMedium_pass", "PUJetID_80XCut_WPMedium("+argStr+")")
-    df = df.Define("probeJet_puIdTight_pass",  "PUJetID_80XCut_WPTight("+argStr+")")
+  if not isUL: #EOY
+    #
+    # Guide on how to read the pileup ID bitmap variable: 
+    # https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupJetID#miniAOD_and_nanoAOD
+    # NOTE: The pileup ID decision flag stored in NanoAOD (v7 and earlier) is based on 
+    # the 80X BDT training and working point (as in the parent MiniAOD).
+    #
+    if not useNewTraining:
+      df = df.Define("probeJet_puIdLoose_pass",  "probeJet_puIdFlag_Loose")
+      df = df.Define("probeJet_puIdMedium_pass", "probeJet_puIdFlag_Medium")
+      df = df.Define("probeJet_puIdTight_pass",  "probeJet_puIdFlag_Tight")
+    #
+    # Starting from NanoAODv7, the pileup ID BDT discriminant value is stored for each jet.
+    # The discriminant is calculated based on the appropriate training for each Run-2 year.
+    # i.e 80X for 2016, 94X for 2017 and 102X for 2018
+    #
+    else:
+      argStr = "probeJet_pt,probeJet_eta,probeJet_puIdDisc"
+      df = df.Define("probeJet_puIdLoose_pass",  "PUJetID_80XCut_WPLoose("+argStr+")")
+      df = df.Define("probeJet_puIdMedium_pass", "PUJetID_80XCut_WPMedium("+argStr+")")
+      df = df.Define("probeJet_puIdTight_pass",  "PUJetID_80XCut_WPTight("+argStr+")")
+  else: #UL
+      argStr = "probeJet_pt,probeJet_eta,probeJet_puIdDiscOTF"
+      df = df.Define("probeJet_puIdLoose_pass",  "PUJetID_106XUL17Cut_WPLoose("+argStr+")")
+      df = df.Define("probeJet_puIdMedium_pass", "PUJetID_106XUL17Cut_WPMedium("+argStr+")")
+      df = df.Define("probeJet_puIdTight_pass",  "PUJetID_106XUL17Cut_WPTight("+argStr+")")
   #
   #
   #
@@ -354,4 +380,3 @@ if __name__== "__main__":
   elapsed = time_end - time_start
   elapsed_str = str(datetime.timedelta(seconds=elapsed.seconds))
   print("MakeHistograms.py::DONE::Sample("+args.sample+")::Time("+str(time_end)+")::Elapsed("+elapsed_str+")")
-
